@@ -26,7 +26,7 @@ func TestCreateManyUsers(t *testing.T) {
 	batch := 10
 
 	for i := 0; i < batch; i++ {
-		err := srv.NewEmailUser(context.Background(), domain.NewEmailUser(faker.Word()))
+		err := srv.NewEmailUser(context.Background(), domain.NewEmailUser(faker.Name()))
 		require.NoError(t, err)
 	}
 }
