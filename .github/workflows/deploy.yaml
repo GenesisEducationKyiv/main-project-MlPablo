@@ -2,10 +2,7 @@ name: Go package
 on:
     push:
         branches:
-            - main
-    pull_request:
-        branches:
-        - '**'
+            - '**'
       
 jobs:
   build:
