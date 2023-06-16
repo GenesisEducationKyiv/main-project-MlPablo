@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"exchange/pkg/domain"
+	"exchange/internal/domain"
 )
 
 type memoryEmailRepository struct {

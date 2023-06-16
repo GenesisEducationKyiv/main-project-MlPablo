@@ -11,10 +11,10 @@ import (
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 
-	"exchange/pkg"
-	"exchange/pkg/domain/mock"
-	"exchange/pkg/repository/mem"
-	"exchange/pkg/services"
+	"exchange/internal"
+	"exchange/internal/domain/mock"
+	"exchange/internal/repository/mem"
+	"exchange/internal/services"
 )
 
 func TestGetCurrency(t *testing.T) {
@@ -23,7 +23,7 @@ func TestGetCurrency(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	h := &exchangeHandler{
-		services: &pkg.Services{
+		services: &internal.Services{
 			CurrencyService: &mock.CurrencyService{},
 		},
 	}
@@ -61,7 +61,7 @@ func TestAddEmail(t *testing.T) {
 	}
 	e := echo.New()
 	h := &exchangeHandler{
-		services: &pkg.Services{
+		services: &internal.Services{
 			EmailUserService: services.NewEmailUserService(
 				context.Background(),
 				mem.NewMemoryRepository(),
@@ -88,7 +88,7 @@ func TestAddEmail(t *testing.T) {
 func TestSendEmails(t *testing.T) {
 	e := echo.New()
 	h := &exchangeHandler{
-		services: &pkg.Services{
+		services: &internal.Services{
 			NotificationService: &mock.NotificationService{},
 		},
 	}

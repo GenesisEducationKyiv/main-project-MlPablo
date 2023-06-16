@@ -3,7 +3,7 @@ package mock
 import (
 	"context"
 
-	"exchange/pkg/domain"
+	"exchange/internal/domain"
 )
 
 const mockPrice = 10

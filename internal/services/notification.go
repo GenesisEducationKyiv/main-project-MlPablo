@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 
-	"exchange/pkg/domain"
+	"exchange/internal/domain"
 )
 
 // Here we define mail service interface that we need for sending emails.

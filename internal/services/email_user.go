@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 
-	"exchange/pkg/domain"
+	"exchange/internal/domain"
 )
 
 type emailUserService struct {

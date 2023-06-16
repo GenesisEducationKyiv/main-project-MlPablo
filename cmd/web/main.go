@@ -13,12 +13,12 @@ import (
 	"github.com/labstack/echo/middleware"
 	"github.com/sirupsen/logrus"
 
-	"exchange/pkg"
-	_http "exchange/pkg/http"
-	"exchange/pkg/infrastructure/currency/currencyapi"
-	"exchange/pkg/infrastructure/mail"
-	"exchange/pkg/repository/filesysytem"
-	"exchange/pkg/services"
+	"exchange/internal"
+	_http "exchange/internal/http"
+	"exchange/internal/infrastructure/currency/currencyapi"
+	"exchange/internal/infrastructure/mail"
+	"exchange/internal/repository/filesysytem"
+	"exchange/internal/services"
 )
 
 func main() {
@@ -55,7 +55,7 @@ func main() {
 	userMailService := services.NewEmailUserService(ctx, mailRepo)
 	notifierService := services.NewNotificationService(ctx, mailRepo, currencyGetter, mailPusher)
 
-	srvs := pkg.NewServices(currencyGetter, userMailService, notifierService)
+	srvs := internal.NewServices(currencyGetter, userMailService, notifierService)
 
 	e := echo.New()
 	e.Use(getServerLogger())

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"exchange/pkg/domain"
+	"exchange/internal/domain"
 )
 
 // I have decided to use a memory index for get operations for.

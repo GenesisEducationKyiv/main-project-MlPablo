@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"exchange/pkg/domain"
-	"exchange/pkg/repository/filesysytem"
+	"exchange/internal/domain"
+	"exchange/internal/repository/filesysytem"
 )
 
 const testFilePath = "test.txt"

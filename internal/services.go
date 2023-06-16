@@ -1,6 +1,6 @@
-package pkg
+package internal
 
-import "exchange/pkg/domain"
+import "exchange/internal/domain"
 
 // Aggregate of all services, so we can put this into the controllers layer,
 // without the need to put it one by one.

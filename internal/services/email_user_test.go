@@ -8,9 +8,9 @@ import (
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/require"
 
-	"exchange/pkg/domain"
-	"exchange/pkg/repository/mem"
-	"exchange/pkg/services"
+	"exchange/internal/domain"
+	"exchange/internal/repository/mem"
+	"exchange/internal/services"
 )
 
 func TestCreateUser(t *testing.T) {

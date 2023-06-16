@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"exchange/pkg/domain"
+	"exchange/internal/domain"
 )
 
 const (

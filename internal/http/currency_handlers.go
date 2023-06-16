@@ -8,15 +8,15 @@ import (
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
 
-	"exchange/pkg"
-	"exchange/pkg/domain"
+	"exchange/internal"
+	"exchange/internal/domain"
 )
 
 type exchangeHandler struct {
-	services *pkg.Services
+	services *internal.Services
 }
 
-func NewCurrencyHandler(e *echo.Echo, services *pkg.Services) {
+func NewCurrencyHandler(e *echo.Echo, services *internal.Services) {
 	handler := &exchangeHandler{
 		services: services,
 	}
