@@ -27,7 +27,7 @@ func TestFileSave(t *testing.T) {
 
 	testEmail := faker.Email()
 
-	err = repo.SaveEmail(ctx, domain.NewEmailUser(testEmail))
+	err = repo.SaveUser(ctx, domain.NewUser(testEmail))
 	require.NoError(t, err)
 
 	fileContent, err := os.ReadFile(testFilePath)
@@ -46,7 +46,7 @@ func TestSave(t *testing.T) {
 
 	testEmail := faker.Email()
 
-	err = repo.SaveEmail(ctx, domain.NewEmailUser(testEmail))
+	err = repo.SaveUser(ctx, domain.NewUser(testEmail))
 	require.NoError(t, err)
 
 	email, err := repo.GetByEmail(ctx, testEmail)
@@ -70,7 +70,7 @@ func TestEmailExist(t *testing.T) {
 
 	for i := 0; i < batch; i++ {
 		mail := faker.Email()
-		err = repo.SaveEmail(ctx, domain.NewEmailUser(mail))
+		err = repo.SaveUser(ctx, domain.NewUser(mail))
 		require.NoError(t, err)
 
 		exist, err = repo.EmailExist(ctx, mail)
@@ -98,7 +98,7 @@ func TestGetAll(t *testing.T) {
 
 	for i := 0; i < batch; i++ {
 		mail := faker.Email()
-		err = repo.SaveEmail(ctx, domain.NewEmailUser(mail))
+		err = repo.SaveUser(ctx, domain.NewUser(mail))
 		require.NoError(t, err)
 
 		emails[i] = mail

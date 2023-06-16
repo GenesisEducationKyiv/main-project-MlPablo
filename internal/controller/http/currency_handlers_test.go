@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -11,7 +10,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 
-	"exchange/internal"
 	"exchange/internal/domain/mock"
 	"exchange/internal/repository/mem"
 	"exchange/internal/services"
@@ -23,7 +21,7 @@ func TestGetCurrency(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	h := &exchangeHandler{
-		services: &internal.Services{
+		services: &Services{
 			CurrencyService: &mock.CurrencyService{},
 		},
 	}
@@ -61,9 +59,8 @@ func TestAddEmail(t *testing.T) {
 	}
 	e := echo.New()
 	h := &exchangeHandler{
-		services: &internal.Services{
-			EmailUserService: services.NewEmailUserService(
-				context.Background(),
+		services: &Services{
+			UserService: services.NewUserService(
 				mem.NewMemoryRepository(),
 			),
 		},
@@ -88,7 +85,7 @@ func TestAddEmail(t *testing.T) {
 func TestSendEmails(t *testing.T) {
 	e := echo.New()
 	h := &exchangeHandler{
-		services: &internal.Services{
+		services: &Services{
 			NotificationService: &mock.NotificationService{},
 		},
 	}

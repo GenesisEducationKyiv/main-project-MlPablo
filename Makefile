@@ -11,7 +11,7 @@ all: test build
 
 build:
 	@echo "Building $(BINARY_NAME)..."
-	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd/web
+	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd
 
 test:
 	@echo "Running tests..."
@@ -24,7 +24,7 @@ clean:
 
 run:
 	@echo "Running $(BINARY_NAME)..."
-	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd/web
+	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd
 	$(BUILD_DIR)/$(BINARY_NAME)
 
 docker:

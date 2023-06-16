@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (f *fileSystemRepository) loadIndex() error {
+func (f *FileSystemRepository) loadIndex() error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 

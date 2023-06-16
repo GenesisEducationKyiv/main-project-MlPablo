@@ -12,20 +12,17 @@ type IMailService interface {
 }
 
 type notificationService struct {
-	ctx             context.Context
-	emailUserRepo   domain.EmailRepository
+	emailUserRepo   domain.UserRepository
 	currencyService domain.ICurrencyService
 	mailService     IMailService
 }
 
 func NewNotificationService(
-	ctx context.Context,
-	emailRepo domain.EmailRepository,
+	emailRepo domain.UserRepository,
 	currencyService domain.ICurrencyService,
 	mailService IMailService,
 ) domain.INotificationService {
 	return &notificationService{
-		ctx:             ctx,
 		emailUserRepo:   emailRepo,
 		mailService:     mailService,
 		currencyService: currencyService,

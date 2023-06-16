@@ -2,6 +2,11 @@ package domain
 
 import "context"
 
+const (
+	UAH = "UAH"
+	BTC = "BTC"
+)
+
 // Currency domain that response to all currency operations.
 // So we can easily add any route on any currency.
 type Currency struct {
@@ -11,8 +16,8 @@ type Currency struct {
 
 func GetBitcoinToUAH() *Currency {
 	return &Currency{
-		BaseCurrency:  "BTC",
-		QuoteCurrency: "UAH",
+		BaseCurrency:  BTC,
+		QuoteCurrency: UAH,
 	}
 }
 

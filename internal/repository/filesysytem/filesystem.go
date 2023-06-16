@@ -18,7 +18,7 @@ import (
 // and then we will add new items in the file and index.
 // Get All operation made with file, just because I want to show read operation with filesystem)
 // Don't forget about locks.
-type fileSystemRepository struct {
+type FileSystemRepository struct {
 	filePath string
 	index    map[string]struct{}
 	// file mutex
@@ -27,8 +27,8 @@ type fileSystemRepository struct {
 	im sync.RWMutex
 }
 
-func NewFileSystemRepository(filePath string) (domain.EmailRepository, error) {
-	f := &fileSystemRepository{
+func NewFileSystemRepository(filePath string) (*FileSystemRepository, error) {
+	f := &FileSystemRepository{
 		filePath: filePath,
 		fm:       sync.RWMutex{},
 		im:       sync.RWMutex{},
@@ -41,7 +41,7 @@ func NewFileSystemRepository(filePath string) (domain.EmailRepository, error) {
 	return f, nil
 }
 
-func (f *fileSystemRepository) SaveEmail(_ context.Context, eu *domain.EmailUser) error {
+func (f *FileSystemRepository) SaveUser(_ context.Context, eu *domain.User) error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 
@@ -63,10 +63,10 @@ func (f *fileSystemRepository) SaveEmail(_ context.Context, eu *domain.EmailUser
 	return nil
 }
 
-func (f *fileSystemRepository) GetByEmail(
+func (f *FileSystemRepository) GetByEmail(
 	_ context.Context,
 	email string,
-) (*domain.EmailUser, error) {
+) (*domain.User, error) {
 	f.im.RLock()
 	defer f.im.RUnlock()
 
@@ -75,10 +75,10 @@ func (f *fileSystemRepository) GetByEmail(
 		return nil, domain.ErrNotFound
 	}
 
-	return domain.NewEmailUser(email), nil
+	return domain.NewUser(email), nil
 }
 
-func (f *fileSystemRepository) GetAllEmails(
+func (f *FileSystemRepository) GetAllEmails(
 	_ context.Context,
 ) ([]string, error) {
 	f.fm.RLock()
@@ -108,7 +108,7 @@ func (f *fileSystemRepository) GetAllEmails(
 	return emails, nil
 }
 
-func (f *fileSystemRepository) EmailExist(_ context.Context, email string) (bool, error) {
+func (f *FileSystemRepository) EmailExist(_ context.Context, email string) (bool, error) {
 	f.im.RLock()
 	defer f.im.RUnlock()
 

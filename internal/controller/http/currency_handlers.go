@@ -8,15 +8,20 @@ import (
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
 
-	"exchange/internal"
 	"exchange/internal/domain"
 )
 
-type exchangeHandler struct {
-	services *internal.Services
+type Services struct {
+	CurrencyService     domain.ICurrencyService
+	UserService         domain.IUserService
+	NotificationService domain.INotificationService
 }
 
-func NewCurrencyHandler(e *echo.Echo, services *internal.Services) {
+type exchangeHandler struct {
+	services *Services
+}
+
+func RegisterHandlers(e *echo.Echo, services *Services) {
 	handler := &exchangeHandler{
 		services: services,
 	}
@@ -61,13 +66,13 @@ func (e *exchangeHandler) SendEmails(c echo.Context) error {
 func (e *exchangeHandler) CreateMailSubscriber(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	email := domain.NewEmailUser(c.FormValue("email"))
+	user := domain.NewUser(c.FormValue("email"))
 
-	if err := email.Validate(); err != nil {
+	if err := user.Validate(); err != nil {
 		return c.JSON(getStatusCode(err), nil)
 	}
 
-	if err := e.services.EmailUserService.NewEmailUser(ctx, email); err != nil {
+	if err := e.services.UserService.NewUser(ctx, user); err != nil {
 		return c.JSON(getStatusCode(err), nil)
 	}
 
