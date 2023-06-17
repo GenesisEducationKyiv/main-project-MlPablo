@@ -18,17 +18,15 @@ const (
 )
 
 type CurrencyAPI struct {
-	baseURL string
-	cfg     *Config
+	cfg *Config
 }
 
 // This is the implementation of logic that can get currency.
 // So service doesn't need to know about how we do this, and we can implement any currency api and interfaces we want
 // I'm not sure about putting this into infrastructure folder.
-func NewCurrencyAPI(cfg *Config, link string) *CurrencyAPI {
+func NewCurrencyAPI(cfg *Config) *CurrencyAPI {
 	return &CurrencyAPI{
-		cfg:     cfg,
-		baseURL: link,
+		cfg: cfg,
 	}
 }
 
@@ -50,7 +48,7 @@ func (api *CurrencyAPI) makeLatestCurrencyRequest(
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		fmt.Sprintf("%s/%s", api.baseURL, latest),
+		fmt.Sprintf("%s/%s", api.cfg.baseURL, latest),
 		nil,
 	)
 	if err != nil {

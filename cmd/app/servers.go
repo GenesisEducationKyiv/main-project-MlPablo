@@ -1,11 +1,10 @@
 package app
 
 import (
-	"os"
-
 	"github.com/sirupsen/logrus"
 
 	"exchange/pkg/echo"
+	"exchange/utils"
 )
 
 type Servers struct {
@@ -20,7 +19,7 @@ func (servers *Servers) Stop() {
 
 func createServers() (*Servers, error) {
 	httpServer, err := echo.New(&echo.Config{
-		Address: os.Getenv("SERVER_ADDR"),
+		Address: utils.TryGetEnvDefault[string]("SERVER_ADDR", "8080"),
 	})
 	if err != nil {
 		return nil, err

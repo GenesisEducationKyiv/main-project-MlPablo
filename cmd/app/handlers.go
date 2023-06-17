@@ -1,14 +1,13 @@
 package app
 
 import (
-	"os"
-
 	_http "exchange/internal/controller/http"
 	"exchange/internal/domain"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/repository/filesysytem"
 	"exchange/internal/services"
+	"exchange/utils"
 )
 
 type Services struct {
@@ -18,16 +17,20 @@ type Services struct {
 }
 
 func creaeteServicesAndHandlers(server *Servers) error {
-	mailRepo, err := filesysytem.NewFileSystemRepository(os.Getenv("FILE_STORE_PATH"))
+	envGet := utils.TryGetEnv[string]
+
+	mailRepo, err := filesysytem.NewFileSystemRepository(
+		utils.TryGetEnvDefault[string]("FILE_STORE_PATH", "./file steerage.txt"),
+	)
 	if err != nil {
 		return err
 	}
 
 	mCfg, err := mail.NewConfig(
-		os.Getenv("EMAIL_LOGIN"),
-		os.Getenv("EMAIL_APP_PASSWORD"),
-		os.Getenv("SMTP_HOST"),
-		os.Getenv("SMTP_PORT"),
+		envGet("EMAIL_LOGIN"),
+		envGet("EMAIL_APP_PASSWORD"),
+		envGet("SMTP_HOST"),
+		envGet("SMTP_PORT"),
 	)
 	if err != nil {
 		return err
@@ -36,8 +39,10 @@ func creaeteServicesAndHandlers(server *Servers) error {
 	mailPusher := mail.NewMailService(mCfg)
 
 	currencyGetter := currencyapi.NewCurrencyAPI(
-		currencyapi.NewConfig(os.Getenv("CURR_API_KEY")),
-		os.Getenv("CURR_URL"),
+		currencyapi.NewConfig(
+			envGet("CURR_API_KEY"),
+			envGet("CURR_URL"),
+		),
 	)
 
 	userMailService := services.NewUserService(mailRepo)

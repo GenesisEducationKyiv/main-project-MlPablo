@@ -1,11 +1,13 @@
 package currencyapi
 
 type Config struct {
-	apiKey string
+	apiKey  string
+	baseURL string
 }
 
-func NewConfig(apiKey string) *Config {
+func NewConfig(apiKey, baseURL string) *Config {
 	return &Config{
-		apiKey: apiKey,
+		apiKey:  apiKey,
+		baseURL: baseURL,
 	}
 }
