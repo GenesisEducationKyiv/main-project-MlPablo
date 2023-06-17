@@ -68,13 +68,14 @@ The project follows a modular structure with different directories serving speci
 ```shell
 /cmd/web/main.go         - Entry point of the application where all modules are set up.
 
-/pkg
+/internal
     /domain              - Contains data models and their communication API.
     /http                - Handles routes and has access to services.
     /infrastructure      - Handles third-party API logic such as sending emails and retrieving currency information. These modules must implement the interfaces defined by the services that use them.
     /repository          - Contains logic for storing data and interacts only with the domain.
     /services            - Implements the business logic of the application. It depends on the domain and repository modules (and sometimes other services).
-
+/pkg                     - Contains reusable packages. Echo server setup, logger etc...
+  /echo                  - Contains echo server setup with Run/Stop implementation.
 .env                     - Contains environment variables where you can define server port, email user, and other configuration options.
 ```
 
