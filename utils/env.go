@@ -30,7 +30,7 @@ func TryGetEnv[T env](env string) T {
 	return res
 }
 
-// Generic function for get environment of any type
+// Generic function for get environment of any type.
 func getEnv[T env](env string) (T, error) {
 	var stdType T
 
