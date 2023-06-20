@@ -18,7 +18,7 @@ import (
 // and then we will add new items in the file and index.
 // Get All operation made with file, just because I want to show read operation with filesystem)
 // Don't forget about locks.
-type FileSystemRepository struct {
+type Repository struct {
 	filePath string
 	index    map[string]struct{}
 	// file mutex
@@ -27,8 +27,8 @@ type FileSystemRepository struct {
 	im sync.RWMutex
 }
 
-func NewFileSystemRepository(filePath string) (*FileSystemRepository, error) {
-	f := &FileSystemRepository{
+func NewFileSystemRepository(filePath string) (*Repository, error) {
+	f := &Repository{
 		filePath: filePath,
 		fm:       sync.RWMutex{},
 		im:       sync.RWMutex{},
@@ -41,7 +41,7 @@ func NewFileSystemRepository(filePath string) (*FileSystemRepository, error) {
 	return f, nil
 }
 
-func (f *FileSystemRepository) SaveUser(_ context.Context, eu *domain.User) error {
+func (f *Repository) SaveUser(_ context.Context, eu *domain.User) error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 
@@ -63,7 +63,7 @@ func (f *FileSystemRepository) SaveUser(_ context.Context, eu *domain.User) erro
 	return nil
 }
 
-func (f *FileSystemRepository) GetByEmail(
+func (f *Repository) GetByEmail(
 	_ context.Context,
 	email string,
 ) (*domain.User, error) {
@@ -78,7 +78,7 @@ func (f *FileSystemRepository) GetByEmail(
 	return domain.NewUser(email), nil
 }
 
-func (f *FileSystemRepository) GetAllEmails(
+func (f *Repository) GetAllEmails(
 	_ context.Context,
 ) ([]string, error) {
 	f.fm.RLock()
@@ -108,7 +108,7 @@ func (f *FileSystemRepository) GetAllEmails(
 	return emails, nil
 }
 
-func (f *FileSystemRepository) EmailExist(_ context.Context, email string) (bool, error) {
+func (f *Repository) EmailExist(_ context.Context, email string) (bool, error) {
 	f.im.RLock()
 	defer f.im.RUnlock()
 

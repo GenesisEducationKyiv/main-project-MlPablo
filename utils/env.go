@@ -46,21 +46,21 @@ func getEnv[T env](env string) (T, error) {
 	case int:
 		res, err := strconv.Atoi(envVal)
 		if err != nil {
-			return stdType, fmt.Errorf("cannot get %s environment variable. Error on parse int: %v", env, err)
+			return stdType, fmt.Errorf("cannot get %s environment variable. Error on parse int: %w", env, err)
 		}
 
 		return any(res).(T), nil
 	case float64:
 		res, err := strconv.ParseFloat(envVal, 64)
 		if err != nil {
-			return stdType, fmt.Errorf("cannot get %s environment variable. Error on parse float64: %v", env, err)
+			return stdType, fmt.Errorf("cannot get %s environment variable. Error on parse float64: %w", env, err)
 		}
 
 		return any(res).(T), nil
 	case float32:
 		res, err := strconv.ParseFloat(envVal, 32)
 		if err != nil {
-			return stdType, fmt.Errorf("cannot get %s environment variable. Error on parse float64: %v", env, err)
+			return stdType, fmt.Errorf("cannot get %s environment variable. Error on parse float64: %w", env, err)
 		}
 
 		return any(res).(T), nil
