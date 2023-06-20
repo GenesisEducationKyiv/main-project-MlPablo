@@ -1,4 +1,4 @@
-package filesysytem
+package filesystem
 
 import (
 	"context"

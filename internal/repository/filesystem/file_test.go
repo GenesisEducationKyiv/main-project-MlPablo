@@ -1,4 +1,4 @@
-package filesysytem_test
+package filesystem_test
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"exchange/internal/domain"
-	"exchange/internal/repository/filesysytem"
+	"exchange/internal/repository/filesystem"
 )
 
 const testFilePath = "test.txt"
@@ -20,7 +20,7 @@ const testFilePath = "test.txt"
 func TestFileSave(t *testing.T) {
 	ctx := context.Background()
 
-	repo, err := filesysytem.NewFileSystemRepository(testFilePath)
+	repo, err := filesystem.NewFileSystemRepository(testFilePath)
 	require.NoError(t, err)
 
 	defer os.Remove(testFilePath)
@@ -39,7 +39,7 @@ func TestFileSave(t *testing.T) {
 func TestSave(t *testing.T) {
 	ctx := context.Background()
 
-	repo, err := filesysytem.NewFileSystemRepository(testFilePath)
+	repo, err := filesystem.NewFileSystemRepository(testFilePath)
 	require.NoError(t, err)
 
 	defer os.Remove(testFilePath)
@@ -59,7 +59,7 @@ func TestEmailExist(t *testing.T) {
 	ctx := context.Background()
 	batch := 10
 
-	repo, err := filesysytem.NewFileSystemRepository(testFilePath)
+	repo, err := filesystem.NewFileSystemRepository(testFilePath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -87,7 +87,7 @@ func TestGetAll(t *testing.T) {
 	ctx := context.Background()
 	batch := 20
 
-	repo, err := filesysytem.NewFileSystemRepository(testFilePath)
+	repo, err := filesystem.NewFileSystemRepository(testFilePath)
 	if err != nil {
 		t.Fatal(err)
 	}

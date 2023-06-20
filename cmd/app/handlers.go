@@ -5,7 +5,7 @@ import (
 	"exchange/internal/domain"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
-	"exchange/internal/repository/filesysytem"
+	"exchange/internal/repository/filesystem"
 	"exchange/internal/services"
 	"exchange/utils"
 )
@@ -16,11 +16,11 @@ type Services struct {
 	NotificationService domain.INotificationService
 }
 
-func creaeteServicesAndHandlers(server *Servers) error {
+func createServicesAndHandlers(server *Servers) error {
 	envGet := utils.TryGetEnv[string]
 
-	mailRepo, err := filesysytem.NewFileSystemRepository(
-		utils.TryGetEnvDefault[string]("FILE_STORE_PATH", "./file steerage.txt"),
+	mailRepo, err := filesystem.NewFileSystemRepository(
+		utils.TryGetEnvDefault("FILE_STORE_PATH", "./file_storage.txt"),
 	)
 	if err != nil {
 		return err

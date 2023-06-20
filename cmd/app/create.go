@@ -12,7 +12,7 @@ func New(ctx context.Context, cancelFunc func()) (*App, error) {
 		return nil, err
 	}
 
-	if err = creaeteServicesAndHandlers(servers); err != nil {
+	if err = createServicesAndHandlers(servers); err != nil {
 		return nil, err
 	}
 

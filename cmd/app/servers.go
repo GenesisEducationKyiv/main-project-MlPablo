@@ -19,7 +19,7 @@ func (servers *Servers) Stop() {
 
 func createServers() (*Servers, error) {
 	httpServer, err := echo.New(&echo.Config{
-		Address: utils.TryGetEnvDefault[string]("SERVER_ADDR", "8080"),
+		Address: utils.TryGetEnvDefault("SERVER_ADDR", "8080"),
 	})
 	if err != nil {
 		return nil, err
