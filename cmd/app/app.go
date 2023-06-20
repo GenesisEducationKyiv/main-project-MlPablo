@@ -5,13 +5,11 @@ import "context"
 type App struct {
 	servers *Servers
 
-	errorChan  chan error
-	ctx        context.Context
-	cancelFunc context.CancelFunc
+	errorChan chan error
 }
 
-func (app *App) Run() error {
-	go app.errorHandler()
+func (app *App) Run(ctx context.Context, cancel context.CancelFunc) error {
+	go app.errorHandler(ctx, cancel)
 
 	go app.servers.HTTPServer.Start(app.errorChan)
 

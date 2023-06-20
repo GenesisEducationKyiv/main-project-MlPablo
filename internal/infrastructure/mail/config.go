@@ -1,9 +1,5 @@
 package mail
 
-import "errors"
-
-var ErrConfig = errors.New("empty config")
-
 type Config struct {
 	user     string
 	password string
@@ -11,25 +7,11 @@ type Config struct {
 	smtpPort string
 }
 
-func NewConfig(user, password, host, port string) (*Config, error) {
-	if isEmpty(user, password, host, port) {
-		return nil, ErrConfig
-	}
-
+func NewConfig(user, password, host, port string) *Config {
 	return &Config{
 		user:     user,
 		password: password,
 		smtpPort: port,
 		smtpHost: host,
-	}, nil
-}
-
-func isEmpty(s ...string) bool {
-	for _, v := range s {
-		if v == "" {
-			return true
-		}
 	}
-
-	return false
 }

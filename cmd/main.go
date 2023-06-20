@@ -26,12 +26,12 @@ func main() {
 
 	logrus.Info("starting application...")
 
-	app, err := app.New(ctx, cancel)
+	app, err := app.New()
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
-	if err = app.Run(); err != nil {
+	if err = app.Run(ctx, cancel); err != nil {
 		logrus.Fatal(err)
 	}
 

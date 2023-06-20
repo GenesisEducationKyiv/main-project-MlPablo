@@ -1,10 +1,6 @@
 package app
 
-import (
-	"context"
-)
-
-func New(ctx context.Context, cancelFunc func()) (*App, error) {
+func New() (*App, error) {
 	errChan := make(chan error)
 
 	servers, err := createServers()
@@ -12,14 +8,15 @@ func New(ctx context.Context, cancelFunc func()) (*App, error) {
 		return nil, err
 	}
 
-	if err = createServicesAndHandlers(servers); err != nil {
+	services, err := createServices()
+	if err != nil {
 		return nil, err
 	}
 
+	registerHandlers(servers, services)
+
 	return &App{
-		servers:    servers,
-		errorChan:  errChan,
-		ctx:        ctx,
-		cancelFunc: cancelFunc,
+		servers:   servers,
+		errorChan: errChan,
 	}, nil
 }

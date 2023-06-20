@@ -1,13 +1,18 @@
 package app
 
-import "github.com/sirupsen/logrus"
+import (
+	"context"
 
-func (app *App) errorHandler() {
+	"github.com/sirupsen/logrus"
+)
+
+func (app *App) errorHandler(ctx context.Context, cancel context.CancelFunc) {
 	for {
 		select {
 		case err := <-app.errorChan:
-			logrus.Fatal(err)
-		case <-app.ctx.Done():
+			cancel()
+			logrus.Error(err)
+		case <-ctx.Done():
 			return
 		}
 	}
