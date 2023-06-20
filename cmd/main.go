@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"os"
 	"os/signal"
 	"syscall"
 
@@ -17,7 +16,13 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGHUP,
+	)
+	defer cancel()
 
 	logrus.Info("starting application...")
 
@@ -32,17 +37,7 @@ func main() {
 
 	logrus.Info("application started =)")
 
-	go syscallWait(cancel)
 	<-ctx.Done()
 
 	logrus.Info("application stopped.")
-}
-
-func syscallWait(cancelFunc func()) {
-	syscallCh := make(chan os.Signal, 1)
-	signal.Notify(syscallCh, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
-
-	<-syscallCh
-
-	cancelFunc()
 }
