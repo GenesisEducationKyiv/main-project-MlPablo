@@ -2,6 +2,8 @@ package domain
 
 import "context"
 
+//go:generate mockgen -source=currency.go -destination=mocks/currency.go
+
 const (
 	UAH = "UAH"
 	BTC = "BTC"
