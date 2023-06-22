@@ -4,6 +4,7 @@ GOBUILD := $(GOCMD) build
 GOCLEAN := $(GOCMD) clean
 GOTEST := $(GOCMD) test
 GOGET := $(GOCMD) get
+GOGENERATE := $(GOCMD) generate
 BINARY_NAME := exchange
 BUILD_DIR := build
 
@@ -16,6 +17,11 @@ build:
 test:
 	@echo "Running tests..."
 	$(GOTEST) -v ./...
+
+generate:
+	@echo "Generating go code..."
+	$(GOGENERATE) ./...
+
 
 clean:
 	@echo "Cleaning..."

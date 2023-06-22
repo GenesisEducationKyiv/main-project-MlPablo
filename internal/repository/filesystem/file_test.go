@@ -117,6 +117,7 @@ func TestConcurrentWrite(t *testing.T) {
 	go func() {
 		for email := range emailCh {
 			emails = append(emails, email)
+
 			wg.Done()
 		}
 	}()

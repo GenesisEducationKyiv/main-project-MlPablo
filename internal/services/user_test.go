@@ -17,10 +17,13 @@ func TestCreateUser(t *testing.T) {
 	defer ctrl.Finish()
 
 	userRepoMock := mock_domain.NewMockUserRepository(ctrl)
+
 	const email = "test@email.com"
 
-	userRepoMock.EXPECT().EmailExist(context.Background(), email).Return(false, nil)
-	userRepoMock.EXPECT().SaveUser(context.Background(), domain.NewUser(email)).Return(nil)
+	gomock.InOrder(
+		userRepoMock.EXPECT().EmailExist(context.Background(), email).Return(false, nil),
+		userRepoMock.EXPECT().SaveUser(context.Background(), domain.NewUser(email)).Return(nil),
+	)
 
 	userService := services.NewUserService(userRepoMock)
 
@@ -33,6 +36,7 @@ func TestCreateUserAlreadyExist(t *testing.T) {
 	defer ctrl.Finish()
 
 	userRepoMock := mock_domain.NewMockUserRepository(ctrl)
+
 	const email = "test@email.com"
 
 	userRepoMock.EXPECT().EmailExist(context.Background(), email).Return(true, nil)

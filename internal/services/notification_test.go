@@ -22,6 +22,7 @@ func TestNotify(t *testing.T) {
 	mailSender := mock_services.NewMockIMailService(ctrl)
 
 	const rate = 1_000_000.0
+
 	emails := []string{"1@email", "2@email"}
 
 	currencyServiceMock.EXPECT().GetCurrency(context.Background(), &domain.Currency{

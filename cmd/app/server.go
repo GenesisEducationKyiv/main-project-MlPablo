@@ -3,12 +3,12 @@ package app
 import (
 	"github.com/sirupsen/logrus"
 
-	"exchange/pkg/echo"
+	echo_server "exchange/pkg/echo"
 	"exchange/utils"
 )
 
 type Servers struct {
-	HTTPServer *echo.Server
+	HTTPServer *echo_server.Server
 }
 
 func (servers *Servers) Stop() {
@@ -18,7 +18,7 @@ func (servers *Servers) Stop() {
 }
 
 func createServers() (*Servers, error) {
-	httpServer, err := echo.New(&echo.Config{
+	httpServer, err := echo_server.New(&echo_server.Config{
 		Address: utils.TryGetEnvDefault("SERVER_ADDR", "8080"),
 	})
 	if err != nil {
