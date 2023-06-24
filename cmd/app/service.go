@@ -39,7 +39,7 @@ func createServices() (*Services, error) {
 			tds.CurrencyAPI,
 			tds.MailSender,
 		),
-		CurrencyService: tds.CurrencyAPI,
+		CurrencyService: services.NewCurrencyService(tds.CurrencyAPI),
 	}, nil
 }
 

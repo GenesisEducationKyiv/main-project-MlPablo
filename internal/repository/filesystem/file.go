@@ -6,6 +6,24 @@ import (
 	"strings"
 )
 
+func (f *Repository) DeleteFile() error {
+	f.fm.Lock()
+	defer f.fm.Unlock()
+
+	if _, err := os.Stat(f.filePath); os.IsNotExist(err) {
+		return nil
+	}
+
+	err := os.Remove(f.filePath)
+	if err != nil {
+		return fmt.Errorf("failed to remove file by path: %s, err: %w", f.filePath, err)
+	}
+
+	f.index = make(map[string]struct{})
+
+	return nil
+}
+
 func (f *Repository) loadIndex() error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
