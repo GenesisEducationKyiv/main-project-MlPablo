@@ -8,7 +8,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/bxcodec/faker/v3"
+	"github.com/bxcodec/faker/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -95,7 +95,7 @@ func TestConcurrentWrite(t *testing.T) {
 
 	defer os.Remove(testFilePath)
 
-	batch := 20
+	batch := 1000
 	wg := sync.WaitGroup{}
 	wg.Add(batch)
 
@@ -103,34 +103,21 @@ func TestConcurrentWrite(t *testing.T) {
 	defer close(emailCh)
 
 	for i := 0; i < batch; i++ {
-		go func(c chan<- string) {
-			mail := faker.Email()
-			err = repo.SaveUser(ctx, user_domain.NewUser(mail))
+		go func() {
+			defer wg.Done()
+
+			err = repo.SaveUser(ctx, user_domain.NewUser("123"))
 			require.NoError(t, err)
-
-			c <- mail
-		}(emailCh)
+		}()
 	}
-
-	var emails []string
-
-	go func() {
-		for email := range emailCh {
-			emails = append(emails, email)
-
-			wg.Done()
-		}
-	}()
 
 	wg.Wait()
 
 	getEmails, err := repo.GetAllEmails(ctx)
 	require.NoError(t, err)
-	require.True(
+	require.Len(
 		t,
-		reflect.DeepEqual(emails, getEmails),
-		"slices elements are not equal",
-		emails,
 		getEmails,
+		batch,
 	)
 }

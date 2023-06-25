@@ -3,7 +3,7 @@ package functional
 import (
 	"context"
 
-	"github.com/bxcodec/faker/v3"
+	"github.com/bxcodec/faker/v4"
 
 	"exchange/internal/domain/event_domain"
 	"exchange/internal/domain/rate_domain"
