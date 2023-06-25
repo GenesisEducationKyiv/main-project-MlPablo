@@ -6,7 +6,7 @@ package mock_services
 
 import (
 	context "context"
-	domain "exchange/internal/domain"
+	rate "exchange/internal/domain/rate"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -36,7 +36,7 @@ func (m *MockICurrencyAPI) EXPECT() *MockICurrencyAPIMockRecorder {
 }
 
 // GetCurrency mocks base method.
-func (m *MockICurrencyAPI) GetCurrency(ctx context.Context, data *domain.Currency) (float64, error) {
+func (m *MockICurrencyAPI) GetCurrency(ctx context.Context, data *rate.Rate) (float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrency", ctx, data)
 	ret0, _ := ret[0].(float64)

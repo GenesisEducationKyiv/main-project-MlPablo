@@ -5,11 +5,13 @@ import (
 
 	"github.com/bxcodec/faker/v3"
 
-	"exchange/internal/domain"
+	"exchange/internal/domain/event"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 )
 
 func (suite *Suite) TestValidCreateUser() {
-	user := domain.NewUser(faker.Email())
+	user := user.NewUser(faker.Email())
 
 	err := suite.srv.userService.NewUser(context.Background(), user)
 	suite.Require().NoError(err)
@@ -20,19 +22,19 @@ func (suite *Suite) TestValidCreateUser() {
 }
 
 func (suite *Suite) TestUserExist() {
-	user := domain.NewUser(faker.Email())
+	u := user.NewUser(faker.Email())
 
-	err := suite.srv.userService.NewUser(context.Background(), user)
+	err := suite.srv.userService.NewUser(context.Background(), u)
 	suite.Require().NoError(err)
 
-	err = suite.srv.userService.NewUser(context.Background(), user)
-	suite.Require().ErrorIs(err, domain.ErrAlreadyExist)
+	err = suite.srv.userService.NewUser(context.Background(), u)
+	suite.Require().ErrorIs(err, user.ErrAlreadyExist)
 }
 
 func (suite *Suite) TestGetCurrency() {
 	res, err := suite.srv.currecnyService.GetCurrency(
 		context.Background(),
-		domain.GetBitcoinToUAH(),
+		rate.GetBitcoinToUAH(),
 	)
 	suite.Require().NoError(err)
 	suite.NotZero(res)
@@ -41,7 +43,7 @@ func (suite *Suite) TestGetCurrency() {
 func (suite *Suite) TestSendEmails() {
 	err := suite.srv.notifyService.Notify(
 		context.Background(),
-		domain.DefaultNotification(),
+		event.DefaultNotification(),
 	)
 	suite.Require().NoError(err)
 }

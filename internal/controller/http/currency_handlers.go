@@ -8,13 +8,15 @@ import (
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
 
-	"exchange/internal/domain"
+	"exchange/internal/domain/event"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 )
 
 type Services struct {
-	CurrencyService     domain.ICurrencyService
-	UserService         domain.IUserService
-	NotificationService domain.INotificationService
+	CurrencyService     rate.ICurrencyService
+	UserService         user.IUserService
+	NotificationService event.INotificationService
 }
 
 type exchangeHandler struct {
@@ -36,7 +38,7 @@ func RegisterHandlers(e *echo.Echo, services *Services) {
 func (e *exchangeHandler) GetBtcToUahCurrency(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	cur := domain.GetBitcoinToUAH()
+	cur := rate.GetBitcoinToUAH()
 
 	resp, err := e.services.CurrencyService.GetCurrency(ctx, cur)
 	if err != nil {
@@ -52,7 +54,7 @@ func (e *exchangeHandler) SendEmails(c echo.Context) error {
 	go func() {
 		if err := e.services.NotificationService.Notify(
 			context.Background(),
-			domain.DefaultNotification(),
+			event.DefaultNotification(),
 		); err != nil {
 			logrus.Errorf("error on sending emails: %v", err)
 		}
@@ -66,7 +68,7 @@ func (e *exchangeHandler) SendEmails(c echo.Context) error {
 func (e *exchangeHandler) CreateMailSubscriber(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	user := domain.NewUser(c.FormValue("email"))
+	user := user.NewUser(c.FormValue("email"))
 
 	if err := user.Validate(); err != nil {
 		return c.JSON(getStatusCode(err), nil)
@@ -88,13 +90,13 @@ func getStatusCode(err error) int {
 	logrus.Error(err)
 
 	switch {
-	case errors.Is(err, domain.ErrInternalServer):
+	case errors.Is(err, user.ErrInternalServer):
 		return http.StatusInternalServerError
-	case errors.Is(err, domain.ErrAlreadyExist):
+	case errors.Is(err, user.ErrAlreadyExist):
 		return http.StatusConflict
-	case errors.Is(err, domain.ErrNotFound):
+	case errors.Is(err, user.ErrNotFound):
 		return http.StatusNotFound
-	case errors.Is(err, domain.ErrBadRequest) || errors.Is(err, domain.ErrInvalidStatus):
+	case errors.Is(err, user.ErrBadRequest) || errors.Is(err, user.ErrInvalidStatus):
 		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError

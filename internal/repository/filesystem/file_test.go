@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"exchange/internal/domain"
+	"exchange/internal/domain/user"
 	"exchange/internal/repository/filesystem"
 )
 
@@ -28,7 +28,7 @@ func TestFileSaveUserEmail(t *testing.T) {
 
 	testEmail := faker.Email()
 
-	err = repo.SaveUser(ctx, domain.NewUser(testEmail))
+	err = repo.SaveUser(ctx, user.NewUser(testEmail))
 	require.NoError(t, err)
 
 	fileContent, err := os.ReadFile(testFilePath)
@@ -50,7 +50,7 @@ func TestEmailExist(t *testing.T) {
 
 	for i := 0; i < batch; i++ {
 		mail := faker.Email()
-		err = repo.SaveUser(ctx, domain.NewUser(mail))
+		err = repo.SaveUser(ctx, user.NewUser(mail))
 		require.NoError(t, err)
 
 		exist, err = repo.EmailExist(ctx, mail)
@@ -76,7 +76,7 @@ func TestGetAll(t *testing.T) {
 
 	for i := 0; i < batch; i++ {
 		mail := faker.Email()
-		err = repo.SaveUser(ctx, domain.NewUser(mail))
+		err = repo.SaveUser(ctx, user.NewUser(mail))
 		require.NoError(t, err)
 
 		emails[i] = mail
@@ -105,7 +105,7 @@ func TestConcurrentWrite(t *testing.T) {
 	for i := 0; i < batch; i++ {
 		go func(c chan<- string) {
 			mail := faker.Email()
-			err = repo.SaveUser(ctx, domain.NewUser(mail))
+			err = repo.SaveUser(ctx, user.NewUser(mail))
 			require.NoError(t, err)
 
 			c <- mail

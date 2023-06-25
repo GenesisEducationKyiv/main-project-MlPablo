@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"exchange/internal/domain"
+	"exchange/internal/domain/user"
 )
 
 // I have decided to use a memory index for get operations for.
@@ -41,7 +41,7 @@ func NewFileSystemRepository(filePath string) (*Repository, error) {
 	return f, nil
 }
 
-func (f *Repository) SaveUser(_ context.Context, eu *domain.User) error {
+func (f *Repository) SaveUser(_ context.Context, eu *user.User) error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 
@@ -66,16 +66,16 @@ func (f *Repository) SaveUser(_ context.Context, eu *domain.User) error {
 func (f *Repository) GetByEmail(
 	_ context.Context,
 	email string,
-) (*domain.User, error) {
+) (*user.User, error) {
 	f.im.RLock()
 	defer f.im.RUnlock()
 
 	_, ok := f.index[email]
 	if !ok {
-		return nil, domain.ErrNotFound
+		return nil, user.ErrNotFound
 	}
 
-	return domain.NewUser(email), nil
+	return user.NewUser(email), nil
 }
 
 func (f *Repository) GetAllEmails(

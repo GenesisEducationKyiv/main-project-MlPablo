@@ -3,7 +3,9 @@ package services
 import (
 	"context"
 
-	"exchange/internal/domain"
+	"exchange/internal/domain/event"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 )
 
 //go:generate mockgen -source=notification.go -destination=mocks/notification.go
@@ -14,33 +16,33 @@ type IMailService interface {
 }
 
 type notificationService struct {
-	emailUserRepo   domain.UserRepository
-	currencyService domain.ICurrencyService
+	userRepo        user.UserRepository
+	currencyService rate.ICurrencyService
 	mailService     IMailService
 }
 
 func NewNotificationService(
-	emailRepo domain.UserRepository,
-	currencyService domain.ICurrencyService,
+	userRepo user.UserRepository,
+	currencyService rate.ICurrencyService,
 	mailService IMailService,
-) domain.INotificationService {
+) event.INotificationService {
 	return &notificationService{
-		emailUserRepo:   emailRepo,
+		userRepo:        userRepo,
 		mailService:     mailService,
 		currencyService: currencyService,
 	}
 }
 
 // Notify users via email due to our business logic.
-func (n *notificationService) Notify(ctx context.Context, _ *domain.Notification) error {
-	btcUah := domain.GetBitcoinToUAH()
+func (n *notificationService) Notify(ctx context.Context, _ *event.Notification) error {
+	btcUah := rate.GetBitcoinToUAH()
 
 	currency, err := n.currencyService.GetCurrency(ctx, btcUah)
 	if err != nil {
 		return err
 	}
 
-	emails, err := n.emailUserRepo.GetAllEmails(ctx)
+	emails, err := n.userRepo.GetAllEmails(ctx)
 	if err != nil {
 		return err
 	}

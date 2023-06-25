@@ -1,4 +1,4 @@
-package domain
+package rate
 
 import "context"
 
@@ -9,20 +9,20 @@ const (
 	BTC = "BTC"
 )
 
-// Currency domain that response to all currency operations.
+// Rate domain that response to all currency operations.
 // So we can easily add any route on any currency.
-type Currency struct {
+type Rate struct {
 	BaseCurrency  string `json:"base_currency"`
 	QuoteCurrency string `json:"quote_currency"`
 }
 
-func GetBitcoinToUAH() *Currency {
-	return &Currency{
+func GetBitcoinToUAH() *Rate {
+	return &Rate{
 		BaseCurrency:  BTC,
 		QuoteCurrency: UAH,
 	}
 }
 
 type ICurrencyService interface {
-	GetCurrency(ctx context.Context, c *Currency) (float64, error)
+	GetCurrency(ctx context.Context, c *Rate) (float64, error)
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"exchange/internal/domain"
+	"exchange/internal/domain/user"
 )
 
 type memoryEmailRepository struct {
@@ -12,14 +12,14 @@ type memoryEmailRepository struct {
 	mu sync.RWMutex
 }
 
-func NewMemoryRepository() domain.UserRepository {
+func NewMemoryRepository() user.UserRepository {
 	return &memoryEmailRepository{
 		db: make(map[string]struct{}),
 		mu: sync.RWMutex{},
 	}
 }
 
-func (m *memoryEmailRepository) SaveUser(_ context.Context, eu *domain.User) error {
+func (m *memoryEmailRepository) SaveUser(_ context.Context, eu *user.User) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -31,16 +31,16 @@ func (m *memoryEmailRepository) SaveUser(_ context.Context, eu *domain.User) err
 func (m *memoryEmailRepository) GetByEmail(
 	_ context.Context,
 	email string,
-) (*domain.User, error) {
+) (*user.User, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
 	_, ok := m.db[email]
 	if !ok {
-		return nil, domain.ErrNotFound
+		return nil, user.ErrNotFound
 	}
 
-	return domain.NewUser(email), nil
+	return user.NewUser(email), nil
 }
 
 func (m *memoryEmailRepository) GetAllEmails(

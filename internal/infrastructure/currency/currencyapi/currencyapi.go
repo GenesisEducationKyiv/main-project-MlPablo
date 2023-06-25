@@ -8,7 +8,8 @@ import (
 	"net/http"
 	"strings"
 
-	"exchange/internal/domain"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 )
 
 const (
@@ -30,7 +31,7 @@ func NewCurrencyAPI(cfg *Config) *CurrencyAPI {
 	}
 }
 
-func (api *CurrencyAPI) GetCurrency(ctx context.Context, cur *domain.Currency) (float64, error) {
+func (api *CurrencyAPI) GetCurrency(ctx context.Context, cur *rate.Rate) (float64, error) {
 	resp, err := api.makeLatestCurrencyRequest(ctx, cur.BaseCurrency, cur.QuoteCurrency)
 	if err != nil {
 		return 0, err
@@ -70,7 +71,7 @@ func (api *CurrencyAPI) makeLatestCurrencyRequest(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, domain.ErrInvalidStatus
+		return nil, user.ErrInvalidStatus
 	}
 
 	return io.ReadAll(resp.Body)
@@ -109,17 +110,17 @@ func getValueFromResponse(m []byte, curr string) (float64, error) {
 
 	data, ok := resp[dataField].(map[string]interface{})
 	if !ok {
-		return 0, domain.ErrInvalidStatus
+		return 0, user.ErrInvalidStatus
 	}
 
 	info, ok := data[curr].(map[string]interface{})
 	if !ok {
-		return 0, domain.ErrInvalidStatus
+		return 0, user.ErrInvalidStatus
 	}
 
 	val, ok := info[valueField].(float64)
 	if !ok {
-		return 0, domain.ErrInvalidStatus
+		return 0, user.ErrInvalidStatus
 	}
 
 	return val, nil

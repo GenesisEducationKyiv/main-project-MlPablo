@@ -3,13 +3,13 @@ package services
 import (
 	"context"
 
-	"exchange/internal/domain"
+	"exchange/internal/domain/rate"
 )
 
 //go:generate mockgen -source=currency.go -destination=mocks/currency.go
 
 type ICurrencyAPI interface {
-	GetCurrency(ctx context.Context, data *domain.Currency) (float64, error)
+	GetCurrency(ctx context.Context, data *rate.Rate) (float64, error)
 }
 
 type currencyService struct {
@@ -18,12 +18,12 @@ type currencyService struct {
 
 func NewCurrencyService(
 	currencyAPI ICurrencyAPI,
-) domain.ICurrencyService {
+) rate.ICurrencyService {
 	return &currencyService{
 		currencyAPI: currencyAPI,
 	}
 }
 
-func (n *currencyService) GetCurrency(ctx context.Context, data *domain.Currency) (float64, error) {
+func (n *currencyService) GetCurrency(ctx context.Context, data *rate.Rate) (float64, error) {
 	return n.currencyAPI.GetCurrency(ctx, data)
 }

@@ -7,7 +7,9 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"exchange/internal/controller/http"
-	"exchange/internal/domain"
+	"exchange/internal/domain/event"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/repository/filesystem"
@@ -18,9 +20,9 @@ import (
 const testFilePath = "test_path.txt"
 
 type Services struct {
-	currecnyService domain.ICurrencyService
-	notifyService   domain.INotificationService
-	userService     domain.IUserService
+	currecnyService rate.ICurrencyService
+	notifyService   event.INotificationService
+	userService     user.IUserService
 }
 
 type Suite struct {

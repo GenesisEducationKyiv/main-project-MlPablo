@@ -1,7 +1,9 @@
 package app
 
 import (
-	"exchange/internal/domain"
+	"exchange/internal/domain/event"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/repository/filesystem"
@@ -10,9 +12,9 @@ import (
 )
 
 type Services struct {
-	CurrencyService     domain.ICurrencyService
-	UserService         domain.IUserService
-	NotificationService domain.INotificationService
+	CurrencyService     rate.ICurrencyService
+	UserService         user.IUserService
+	NotificationService event.INotificationService
 }
 
 type ThirdPartyServices struct {
@@ -21,7 +23,7 @@ type ThirdPartyServices struct {
 }
 
 type Repositories struct {
-	UserRepo domain.UserRepository
+	UserRepo user.UserRepository
 }
 
 func createServices() (*Services, error) {
