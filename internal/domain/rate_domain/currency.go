@@ -1,6 +1,4 @@
-package rate
-
-import "context"
+package rate_domain
 
 //go:generate mockgen -source=currency.go -destination=mocks/currency.go
 
@@ -21,8 +19,4 @@ func GetBitcoinToUAH() *Rate {
 		BaseCurrency:  BTC,
 		QuoteCurrency: UAH,
 	}
-}
-
-type ICurrencyService interface {
-	GetCurrency(ctx context.Context, c *Rate) (float64, error)
 }

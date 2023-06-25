@@ -1,6 +1,4 @@
-package user
-
-import "context"
+package user_domain
 
 //go:generate mockgen -source=user.go -destination=mocks/user.go
 
@@ -22,15 +20,4 @@ func (e *User) Validate() error {
 	}
 
 	return nil
-}
-
-type IUserService interface {
-	NewUser(ctx context.Context, eu *User) error
-}
-
-type UserRepository interface {
-	SaveUser(ctx context.Context, user *User) error
-	EmailExist(ctx context.Context, email string) (bool, error)
-	GetByEmail(ctx context.Context, email string) (*User, error)
-	GetAllEmails(ctx context.Context) ([]string, error)
 }

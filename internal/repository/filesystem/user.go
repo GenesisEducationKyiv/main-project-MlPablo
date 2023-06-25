@@ -5,43 +5,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 
-	"exchange/internal/domain/user"
+	"exchange/internal/domain/user_domain"
 )
 
-// I have decided to use a memory index for get operations for.
-// This was done, because simple get operation is too heavy
-// where we need to read the whole file and then iterate over every email (O(n)).
-// On the big amount of data this can lead to performance issues.
-// So better if we will index the file on the startup of the program
-// and then we will add new items in the file and index.
-// Get All operation made with file, just because I want to show read operation with filesystem)
-// Don't forget about locks.
-type Repository struct {
-	filePath string
-	index    map[string]struct{}
-	// file mutex
-	fm sync.RWMutex
-	// index mutex
-	im sync.RWMutex
-}
-
-func NewFileSystemRepository(filePath string) (*Repository, error) {
-	f := &Repository{
-		filePath: filePath,
-		fm:       sync.RWMutex{},
-		im:       sync.RWMutex{},
-	}
-
-	if err := f.loadIndex(); err != nil {
-		return nil, err
-	}
-
-	return f, nil
-}
-
-func (f *Repository) SaveUser(_ context.Context, eu *user.User) error {
+func (f *Repository) SaveUser(_ context.Context, eu *user_domain.User) error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 
@@ -66,16 +34,16 @@ func (f *Repository) SaveUser(_ context.Context, eu *user.User) error {
 func (f *Repository) GetByEmail(
 	_ context.Context,
 	email string,
-) (*user.User, error) {
+) (*user_domain.User, error) {
 	f.im.RLock()
 	defer f.im.RUnlock()
 
 	_, ok := f.index[email]
 	if !ok {
-		return nil, user.ErrNotFound
+		return nil, user_domain.ErrNotFound
 	}
 
-	return user.NewUser(email), nil
+	return user_domain.NewUser(email), nil
 }
 
 func (f *Repository) GetAllEmails(

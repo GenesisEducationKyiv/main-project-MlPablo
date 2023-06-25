@@ -17,25 +17,23 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"exchange/internal/domain/event"
-	mock_event "exchange/internal/domain/event/mocks"
-	"exchange/internal/domain/rate"
-	mock_rate "exchange/internal/domain/rate/mocks"
-	"exchange/internal/domain/user"
-	mock_user "exchange/internal/domain/user/mocks"
+	mock_http "exchange/internal/controller/http/mocks"
+	"exchange/internal/domain/event_domain"
+	"exchange/internal/domain/rate_domain"
+	"exchange/internal/domain/user_domain"
 )
 
 type mockServices struct {
-	currencyService     *mock_rate.MockICurrencyService
-	userService         *mock_user.MockIUserService
-	notificationService *mock_event.MockINotificationService
+	currencyService     *mock_http.MockICurrencyService
+	userService         *mock_http.MockIUserService
+	notificationService *mock_http.MockINotificationService
 }
 
 func getMockedServices(ctrl *gomock.Controller) *mockServices {
 	return &mockServices{
-		currencyService:     mock_rate.NewMockICurrencyService(ctrl),
-		userService:         mock_user.NewMockIUserService(ctrl),
-		notificationService: mock_event.NewMockINotificationService(ctrl),
+		currencyService:     mock_http.NewMockICurrencyService(ctrl),
+		userService:         mock_http.NewMockIUserService(ctrl),
+		notificationService: mock_http.NewMockINotificationService(ctrl),
 	}
 }
 
@@ -78,7 +76,7 @@ func TestGetCurrency(t *testing.T) {
 			mockedServices := getMockedServices(ctrl)
 
 			mockedServices.currencyService.EXPECT().
-				GetCurrency(context.Background(), rate.GetBitcoinToUAH()).
+				GetCurrency(context.Background(), rate_domain.GetBitcoinToUAH()).
 				Return(test.expectedRate, test.expectedErrFromCurrency)
 
 			e := echo.New()
@@ -135,7 +133,7 @@ func TestSendEmails(t *testing.T) {
 			wg.Add(1)
 
 			mockedServices.notificationService.EXPECT().
-				Notify(context.Background(), event.DefaultNotification()).
+				Notify(context.Background(), event_domain.DefaultNotification()).
 				Return(test.expectedErrFromSendNotification).
 				Do(func(_, _ any) {
 					defer wg.Done()
@@ -172,7 +170,7 @@ func TestCreateMailSubscriber(t *testing.T) {
 			name: "valid case",
 			serviceSetup: func(m *mockServices, a args) {
 				m.userService.EXPECT().
-					NewUser(context.Background(), user.NewUser(a.email)).
+					NewUser(context.Background(), user_domain.NewUser(a.email)).
 					Return(nil)
 			},
 			args: args{
@@ -192,8 +190,8 @@ func TestCreateMailSubscriber(t *testing.T) {
 			name: "email already exist",
 			serviceSetup: func(m *mockServices, a args) {
 				m.userService.EXPECT().
-					NewUser(context.Background(), user.NewUser(a.email)).
-					Return(user.ErrAlreadyExist)
+					NewUser(context.Background(), user_domain.NewUser(a.email)).
+					Return(user_domain.ErrAlreadyExist)
 			},
 			args: args{
 				email: "some@email.com",
@@ -259,7 +257,7 @@ func TestGetCurrency21(t *testing.T) {
 			mockedServices := getMockedServices(ctrl)
 
 			mockedServices.currencyService.EXPECT().
-				GetCurrency(context.Background(), rate.GetBitcoinToUAH()).
+				GetCurrency(context.Background(), rate_domain.GetBitcoinToUAH()).
 				Return(test.expectedRate, test.expectedErrFromCurrency)
 
 			e := echo.New()

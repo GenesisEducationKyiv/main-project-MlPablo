@@ -1,20 +1,19 @@
 package app
 
 import (
-	"exchange/internal/domain/event"
-	"exchange/internal/domain/rate"
-	"exchange/internal/domain/user"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/repository/filesystem"
-	"exchange/internal/services"
+	"exchange/internal/services/currency_service"
+	"exchange/internal/services/event_service"
+	"exchange/internal/services/user_service"
 	"exchange/utils"
 )
 
 type Services struct {
-	CurrencyService     rate.ICurrencyService
-	UserService         user.IUserService
-	NotificationService event.INotificationService
+	CurrencyService     *currency_service.Service
+	UserService         *user_service.Service
+	NotificationService *event_service.Service
 }
 
 type ThirdPartyServices struct {
@@ -23,7 +22,7 @@ type ThirdPartyServices struct {
 }
 
 type Repositories struct {
-	UserRepo user.UserRepository
+	fileRepo *filesystem.Repository
 }
 
 func createServices() (*Services, error) {
@@ -35,13 +34,13 @@ func createServices() (*Services, error) {
 	tds := createThirdPartyServices()
 
 	return &Services{
-		UserService: services.NewUserService(repo.UserRepo),
-		NotificationService: services.NewNotificationService(
-			repo.UserRepo,
+		UserService: user_service.NewUserService(repo.fileRepo),
+		NotificationService: event_service.NewNotificationService(
+			repo.fileRepo,
 			tds.CurrencyAPI,
 			tds.MailSender,
 		),
-		CurrencyService: services.NewCurrencyService(tds.CurrencyAPI),
+		CurrencyService: currency_service.NewCurrencyService(tds.CurrencyAPI),
 	}, nil
 }
 
@@ -69,7 +68,7 @@ func createThirdPartyServices() *ThirdPartyServices {
 }
 
 func createRepositories() (*Repositories, error) {
-	userRepo, err := filesystem.NewFileSystemRepository(
+	fileRepo, err := filesystem.NewFileSystemRepository(
 		utils.TryGetEnvDefault("FILE_STORE_PATH", "./file_storage.txt"),
 	)
 	if err != nil {
@@ -77,6 +76,6 @@ func createRepositories() (*Repositories, error) {
 	}
 
 	return &Repositories{
-		UserRepo: userRepo,
+		fileRepo: fileRepo,
 	}, nil
 }

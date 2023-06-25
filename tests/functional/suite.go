@@ -4,19 +4,18 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 
-	"exchange/internal/domain/event"
-	"exchange/internal/domain/rate"
-	"exchange/internal/domain/user"
 	"exchange/internal/repository/filesystem"
-	"exchange/internal/services"
+	"exchange/internal/services/currency_service"
+	"exchange/internal/services/event_service"
+	"exchange/internal/services/user_service"
 )
 
 const testFilePath = "test_path.txt"
 
 type Services struct {
-	currecnyService rate.ICurrencyService
-	notifyService   event.INotificationService
-	userService     user.IUserService
+	currecnyService *currency_service.Service
+	notifyService   *event_service.Service
+	userService     *user_service.Service
 }
 
 type Suite struct {
@@ -33,9 +32,9 @@ func (suite *Suite) SetupSuite() {
 
 	stubs := new(thirdParyStubs)
 
-	currecnyService := services.NewCurrencyService(stubs)
-	userService := services.NewUserService(fileRepo)
-	notificationService := services.NewNotificationService(fileRepo, currecnyService, stubs)
+	currecnyService := currency_service.NewCurrencyService(stubs)
+	userService := user_service.NewUserService(fileRepo)
+	notificationService := event_service.NewNotificationService(fileRepo, currecnyService, stubs)
 
 	srvs := &Services{
 		currecnyService: currecnyService,

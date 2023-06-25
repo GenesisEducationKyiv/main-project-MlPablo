@@ -7,11 +7,11 @@ import (
 
 	"github.com/bxcodec/faker/v3"
 
-	"exchange/internal/domain/user"
+	"exchange/internal/domain/user_domain"
 )
 
 func (suite *Suite) TestValidCreateUser() {
-	user := user.NewUser(faker.Email())
+	user := user_domain.NewUser(faker.Email())
 
 	rec := httptest.NewRecorder()
 
@@ -25,7 +25,7 @@ func (suite *Suite) TestValidCreateUser() {
 }
 
 func (suite *Suite) TestInvalidEmail() {
-	user := user.NewUser(faker.Word())
+	user := user_domain.NewUser(faker.Word())
 
 	rec := httptest.NewRecorder()
 
@@ -35,7 +35,7 @@ func (suite *Suite) TestInvalidEmail() {
 }
 
 func (suite *Suite) TestSameEmail() {
-	user := user.NewUser(faker.Email())
+	user := user_domain.NewUser(faker.Email())
 
 	rec := httptest.NewRecorder()
 

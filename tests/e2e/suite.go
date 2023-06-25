@@ -7,22 +7,21 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"exchange/internal/controller/http"
-	"exchange/internal/domain/event"
-	"exchange/internal/domain/rate"
-	"exchange/internal/domain/user"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/repository/filesystem"
-	"exchange/internal/services"
+	"exchange/internal/services/currency_service"
+	"exchange/internal/services/event_service"
+	"exchange/internal/services/user_service"
 	"exchange/utils"
 )
 
 const testFilePath = "test_path.txt"
 
 type Services struct {
-	currecnyService rate.ICurrencyService
-	notifyService   event.INotificationService
-	userService     user.IUserService
+	currecnyService *currency_service.Service
+	notifyService   *event_service.Service
+	userService     *user_service.Service
 }
 
 type Suite struct {
@@ -58,9 +57,13 @@ func (suite *Suite) SetupSuite() {
 		logrus.Fatal(err)
 	}
 
-	currecnyService := services.NewCurrencyService(currencyAPI)
-	userService := services.NewUserService(fileRepo)
-	notificationService := services.NewNotificationService(fileRepo, currecnyService, mailSender)
+	currecnyService := currency_service.NewCurrencyService(currencyAPI)
+	userService := user_service.NewUserService(fileRepo)
+	notificationService := event_service.NewNotificationService(
+		fileRepo,
+		currecnyService,
+		mailSender,
+	)
 
 	srvs := &Services{
 		currecnyService: currecnyService,

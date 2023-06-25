@@ -4,22 +4,22 @@ import (
 	"context"
 	"sync"
 
-	"exchange/internal/domain/user"
+	"exchange/internal/domain/user_domain"
 )
 
-type memoryEmailRepository struct {
+type Repository struct {
 	db map[string]struct{}
 	mu sync.RWMutex
 }
 
-func NewMemoryRepository() user.UserRepository {
-	return &memoryEmailRepository{
+func NewMemoryRepository() *Repository {
+	return &Repository{
 		db: make(map[string]struct{}),
 		mu: sync.RWMutex{},
 	}
 }
 
-func (m *memoryEmailRepository) SaveUser(_ context.Context, eu *user.User) error {
+func (m *Repository) SaveUser(_ context.Context, eu *user_domain.User) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -28,22 +28,22 @@ func (m *memoryEmailRepository) SaveUser(_ context.Context, eu *user.User) error
 	return nil
 }
 
-func (m *memoryEmailRepository) GetByEmail(
+func (m *Repository) GetByEmail(
 	_ context.Context,
 	email string,
-) (*user.User, error) {
+) (*user_domain.User, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
 	_, ok := m.db[email]
 	if !ok {
-		return nil, user.ErrNotFound
+		return nil, user_domain.ErrNotFound
 	}
 
-	return user.NewUser(email), nil
+	return user_domain.NewUser(email), nil
 }
 
-func (m *memoryEmailRepository) GetAllEmails(
+func (m *Repository) GetAllEmails(
 	_ context.Context,
 ) ([]string, error) {
 	m.mu.RLock()
@@ -58,7 +58,7 @@ func (m *memoryEmailRepository) GetAllEmails(
 	return emails, nil
 }
 
-func (m *memoryEmailRepository) EmailExist(_ context.Context, email string) (bool, error) {
+func (m *Repository) EmailExist(_ context.Context, email string) (bool, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 

@@ -1,8 +1,4 @@
-package event
-
-import "context"
-
-//go:generate mockgen -source=notification.go -destination=mocks/notification.go
+package event_domain
 
 // Notification domain that responses for notifying users.
 // It can be easily expanded for notify specific user group.
@@ -13,8 +9,4 @@ type Notification struct {
 
 func DefaultNotification() *Notification {
 	return &Notification{}
-}
-
-type INotificationService interface {
-	Notify(ctx context.Context, n *Notification) error
 }
