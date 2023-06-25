@@ -3,10 +3,18 @@ module exchange
 go 1.20
 
 require (
+	github.com/antihax/optional v1.0.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo v3.3.10+incompatible
+	github.com/mailslurp/mailslurp-client-go v0.0.0-20230614101136-8f84f48ff425
 	github.com/sirupsen/logrus v1.9.3
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
+)
+
+require (
+	github.com/golang/protobuf v1.2.0 // indirect
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
+	google.golang.org/appengine v1.4.0 // indirect
 )
 
 require (
