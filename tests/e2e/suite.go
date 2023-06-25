@@ -1,6 +1,8 @@
 package e2e
 
 import (
+	"os"
+
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
@@ -85,5 +87,5 @@ func (suite *Suite) SetupSuite() {
 }
 
 func (suite *Suite) AfterTest(_, _ string) {
-	suite.NoError(suite.repo.DeleteFile())
+	os.Remove(testFilePath)
 }

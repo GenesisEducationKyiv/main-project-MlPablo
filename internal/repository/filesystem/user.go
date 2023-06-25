@@ -1,8 +1,11 @@
 package filesystem
 
 import (
+	"bufio"
 	"context"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
@@ -23,27 +26,7 @@ func (f *Repository) SaveUser(_ context.Context, eu *user_domain.User) error {
 		return fmt.Errorf("failed write to file")
 	}
 
-	f.im.Lock()
-	defer f.im.Unlock()
-
-	f.index[eu.Email] = struct{}{}
-
 	return nil
-}
-
-func (f *Repository) GetByEmail(
-	_ context.Context,
-	email string,
-) (*user_domain.User, error) {
-	f.im.RLock()
-	defer f.im.RUnlock()
-
-	_, ok := f.index[email]
-	if !ok {
-		return nil, user_domain.ErrNotFound
-	}
-
-	return user_domain.NewUser(email), nil
 }
 
 func (f *Repository) GetAllEmails(
@@ -52,12 +35,12 @@ func (f *Repository) GetAllEmails(
 	f.fm.RLock()
 	defer f.fm.RUnlock()
 
-	if _, err := os.Stat(f.filePath); os.IsNotExist(err) {
-		return []string{}, nil
-	}
-
 	data, err := os.ReadFile(f.filePath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return []string{}, nil
+		}
+
 		return nil, fmt.Errorf("failed to read file by path: %s", f.filePath)
 	}
 
@@ -80,21 +63,31 @@ func (f *Repository) EmailExist(_ context.Context, email string) (bool, error) {
 	f.fm.RLock()
 	defer f.fm.RUnlock()
 
-	if _, err := os.Stat(f.filePath); os.IsNotExist(err) {
-		f.im.Lock()
-		defer f.im.Unlock()
+	file, err := os.Open(f.filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
 
-		f.index = make(map[string]struct{})
-
-		return false, nil
+		return false, err
 	}
 
-	f.im.RLock()
-	defer f.im.RUnlock()
+	r := bufio.NewReader(file)
 
-	_, ok := f.index[email]
+	for {
+		line, _, err := r.ReadLine() //nolint:govet // shadow here is ok
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				return false, nil
+			}
 
-	return ok, nil
+			return false, err
+		}
+
+		if string(line) == (email) {
+			return true, nil
+		}
+	}
 }
 
 func addEndOfTheLine(data string) string {

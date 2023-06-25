@@ -1,6 +1,8 @@
 package filesystem
 
-import "sync"
+import (
+	"sync"
+)
 
 // I have decided to use a memory index for get operations for.
 // This was done, because simple get operation is too heavy
@@ -12,22 +14,14 @@ import "sync"
 // Don't forget about locks.
 type Repository struct {
 	filePath string
-	index    map[string]struct{}
 	// file mutex
 	fm sync.RWMutex
-	// index mutex
-	im sync.RWMutex
 }
 
 func NewFileSystemRepository(filePath string) (*Repository, error) {
 	f := &Repository{
 		filePath: filePath,
 		fm:       sync.RWMutex{},
-		im:       sync.RWMutex{},
-	}
-
-	if err := f.loadIndex(); err != nil {
-		return nil, err
 	}
 
 	return f, nil

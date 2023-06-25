@@ -1,6 +1,8 @@
 package functional
 
 import (
+	"os"
+
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 
@@ -47,5 +49,5 @@ func (suite *Suite) SetupSuite() {
 }
 
 func (suite *Suite) AfterTest(_, _ string) {
-	suite.NoError(suite.repo.DeleteFile())
+	os.Remove(testFilePath)
 }
