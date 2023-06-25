@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 
-	"github.com/bxcodec/faker/v4"
+	"github.com/go-faker/faker/v4"
 
 	"exchange/internal/domain/user_domain"
 )
