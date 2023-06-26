@@ -12,7 +12,7 @@ type env interface {
 	~string | ~int | ~float64 | ~float32
 }
 
-func TryGetEnvDefault[T env](env string, val T) T {
+func TryGetEnvDefault[T env](env string, val T) T { //nolint: ireturn // generic interacted
 	res, err := getEnv[T](env)
 	if err != nil {
 		return val
@@ -21,7 +21,7 @@ func TryGetEnvDefault[T env](env string, val T) T {
 	return res
 }
 
-func TryGetEnv[T env](env string) T {
+func TryGetEnv[T env](env string) T { //nolint: ireturn // generic interacted
 	res, err := getEnv[T](env)
 	if err != nil {
 		logrus.Fatal(err)
@@ -31,7 +31,7 @@ func TryGetEnv[T env](env string) T {
 }
 
 // Generic function for get environment of any type.
-func getEnv[T env](env string) (T, error) {
+func getEnv[T env](env string) (T, error) { //nolint: ireturn // generic interacted
 	var stdType T
 
 	envVal := os.Getenv(env)
