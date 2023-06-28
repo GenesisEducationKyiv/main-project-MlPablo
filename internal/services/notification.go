@@ -6,6 +6,8 @@ import (
 	"exchange/internal/domain"
 )
 
+//go:generate mockgen -source=notification.go -destination=mocks/notification.go
+
 // Here we define mail service interface that we need for sending emails.
 type IMailService interface {
 	SendEmail(ctx context.Context, data any, receivers ...string) error

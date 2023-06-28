@@ -2,6 +2,8 @@ package domain
 
 import "context"
 
+//go:generate mockgen -source=user.go -destination=mocks/user.go
+
 // User domain that responds for saving info about emails.
 // We can easily expand this logic for more complex users. For example user name, etc...
 type User struct {

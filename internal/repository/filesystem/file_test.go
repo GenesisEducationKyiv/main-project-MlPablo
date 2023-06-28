@@ -5,6 +5,7 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/bxcodec/faker/v3"
@@ -17,7 +18,7 @@ import (
 
 const testFilePath = "test.txt"
 
-func TestFileSave(t *testing.T) {
+func TestFileSaveUserEmail(t *testing.T) {
 	ctx := context.Background()
 
 	repo, err := filesystem.NewFileSystemRepository(testFilePath)
@@ -36,33 +37,12 @@ func TestFileSave(t *testing.T) {
 	assert.Equal(t, testEmail, strings.TrimSpace(string(fileContent)))
 }
 
-func TestSave(t *testing.T) {
-	ctx := context.Background()
-
-	repo, err := filesystem.NewFileSystemRepository(testFilePath)
-	require.NoError(t, err)
-
-	defer os.Remove(testFilePath)
-
-	testEmail := faker.Email()
-
-	err = repo.SaveUser(ctx, domain.NewUser(testEmail))
-	require.NoError(t, err)
-
-	email, err := repo.GetByEmail(ctx, testEmail)
-	require.NoError(t, err)
-
-	assert.Equal(t, testEmail, email.Email)
-}
-
 func TestEmailExist(t *testing.T) {
 	ctx := context.Background()
 	batch := 10
 
 	repo, err := filesystem.NewFileSystemRepository(testFilePath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	defer os.Remove(testFilePath)
 
@@ -88,9 +68,7 @@ func TestGetAll(t *testing.T) {
 	batch := 20
 
 	repo, err := filesystem.NewFileSystemRepository(testFilePath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	defer os.Remove(testFilePath)
 
@@ -107,4 +85,52 @@ func TestGetAll(t *testing.T) {
 	getEmails, err := repo.GetAllEmails(ctx)
 	require.NoError(t, err)
 	require.True(t, reflect.DeepEqual(emails, getEmails), "slices elements are not equal")
+}
+
+func TestConcurrentWrite(t *testing.T) {
+	ctx := context.Background()
+
+	repo, err := filesystem.NewFileSystemRepository(testFilePath)
+	require.NoError(t, err)
+
+	defer os.Remove(testFilePath)
+
+	batch := 20
+	wg := sync.WaitGroup{}
+	wg.Add(batch)
+
+	emailCh := make(chan string)
+	defer close(emailCh)
+
+	for i := 0; i < batch; i++ {
+		go func(c chan<- string) {
+			mail := faker.Email()
+			err = repo.SaveUser(ctx, domain.NewUser(mail))
+			require.NoError(t, err)
+
+			c <- mail
+		}(emailCh)
+	}
+
+	var emails []string
+
+	go func() {
+		for email := range emailCh {
+			emails = append(emails, email)
+
+			wg.Done()
+		}
+	}()
+
+	wg.Wait()
+
+	getEmails, err := repo.GetAllEmails(ctx)
+	require.NoError(t, err)
+	require.True(
+		t,
+		reflect.DeepEqual(emails, getEmails),
+		"slices elements are not equal",
+		emails,
+		getEmails,
+	)
 }

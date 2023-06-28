@@ -109,6 +109,18 @@ func (f *Repository) GetAllEmails(
 }
 
 func (f *Repository) EmailExist(_ context.Context, email string) (bool, error) {
+	f.fm.RLock()
+	defer f.fm.RUnlock()
+
+	if _, err := os.Stat(f.filePath); os.IsNotExist(err) {
+		f.im.Lock()
+		defer f.im.Unlock()
+
+		f.index = make(map[string]struct{})
+
+		return false, nil
+	}
+
 	f.im.RLock()
 	defer f.im.RUnlock()
 

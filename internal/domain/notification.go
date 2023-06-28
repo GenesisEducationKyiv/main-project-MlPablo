@@ -2,6 +2,8 @@ package domain
 
 import "context"
 
+//go:generate mockgen -source=notification.go -destination=mocks/notification.go
+
 // Notification domain that responses for notifying users.
 // It can be easily expanded for notify specific user group.
 // Here UserGroup is useless. But it was made for future purposes.
