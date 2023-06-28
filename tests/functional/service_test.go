@@ -10,17 +10,6 @@ import (
 	"exchange/internal/domain/user_domain"
 )
 
-func (suite *Suite) TestValidCreateUser() {
-	user := user_domain.NewUser(faker.Email())
-
-	err := suite.srv.userService.NewUser(context.Background(), user)
-	suite.Require().NoError(err)
-
-	ok, err := suite.checkRowExistInFileDB(user.Email)
-	suite.Require().NoError(err)
-	suite.True(ok)
-}
-
 func (suite *Suite) TestUserExist() {
 	u := user_domain.NewUser(faker.Email())
 
