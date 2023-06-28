@@ -63,25 +63,3 @@ func (e *exchangeHandler) CreateMailSubscriber(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, nil)
 }
-
-// based on the error we define the response status code.
-// func getStatusCode(err error) int {
-// 	if err == nil {
-// 		return http.StatusOK
-// 	}
-//
-// 	logrus.Error(err)
-//
-// 	switch {
-// 	case errors.Is(err, user_domain.ErrInternalServer):
-// 		return http.StatusInternalServerError
-// 	case errors.Is(err, user_domain.ErrAlreadyExist):
-// 		return http.StatusConflict
-// 	case errors.Is(err, user_domain.ErrNotFound):
-// 		return http.StatusNotFound
-// 	case errors.Is(err, user_domain.ErrBadRequest) || errors.Is(err, user_domain.ErrInvalidStatus):
-// 		return http.StatusBadRequest
-// 	default:
-// 		return http.StatusInternalServerError
-// 	}
-// }
