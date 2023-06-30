@@ -1,9 +1,9 @@
-package user_service
+package user
 
 import (
 	"context"
 
-	"exchange/internal/domain/user_domain"
+	user_domain "exchange/internal/domain/user"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/user.go

@@ -1,4 +1,4 @@
-package rate_domain
+package rate
 
 //go:generate mockgen -source=currency.go -destination=mocks/currency.go
 

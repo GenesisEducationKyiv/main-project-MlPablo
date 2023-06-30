@@ -5,9 +5,9 @@ import (
 
 	"github.com/go-faker/faker/v4"
 
-	"exchange/internal/domain/event_domain"
-	"exchange/internal/domain/rate_domain"
-	"exchange/internal/domain/user_domain"
+	"exchange/internal/domain/notification"
+	rate_domain "exchange/internal/domain/rate"
+	user_domain "exchange/internal/domain/user"
 )
 
 func (suite *Suite) TestUserExist() {
@@ -32,7 +32,7 @@ func (suite *Suite) TestGetCurrency() {
 func (suite *Suite) TestSendEmails() {
 	err := suite.srv.notifyService.Notify(
 		context.Background(),
-		event_domain.DefaultNotification(),
+		notification.DefaultNotification(),
 	)
 	suite.Require().NoError(err)
 }

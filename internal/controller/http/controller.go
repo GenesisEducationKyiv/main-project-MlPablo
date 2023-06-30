@@ -5,15 +5,15 @@ import (
 
 	"github.com/labstack/echo"
 
-	"exchange/internal/domain/event_domain"
-	"exchange/internal/domain/rate_domain"
-	"exchange/internal/domain/user_domain"
+	"exchange/internal/domain/notification"
+	rate_domain "exchange/internal/domain/rate"
+	user_domain "exchange/internal/domain/user"
 )
 
 //go:generate mockgen -source=controller.go -destination=mocks/controller.go
 
 type INotificationService interface {
-	Notify(ctx context.Context, n *event_domain.Notification) error
+	Notify(ctx context.Context, n *notification.Notification) error
 }
 
 type ICurrencyService interface {

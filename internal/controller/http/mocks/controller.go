@@ -6,9 +6,9 @@ package mock_http
 
 import (
 	context "context"
-	event_domain "exchange/internal/domain/event_domain"
-	rate_domain "exchange/internal/domain/rate_domain"
-	user_domain "exchange/internal/domain/user_domain"
+	notification "exchange/internal/domain/notification"
+	rate "exchange/internal/domain/rate"
+	user "exchange/internal/domain/user"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -38,7 +38,7 @@ func (m *MockINotificationService) EXPECT() *MockINotificationServiceMockRecorde
 }
 
 // Notify mocks base method.
-func (m *MockINotificationService) Notify(ctx context.Context, n *event_domain.Notification) error {
+func (m *MockINotificationService) Notify(ctx context.Context, n *notification.Notification) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Notify", ctx, n)
 	ret0, _ := ret[0].(error)
@@ -75,7 +75,7 @@ func (m *MockICurrencyService) EXPECT() *MockICurrencyServiceMockRecorder {
 }
 
 // GetCurrency mocks base method.
-func (m *MockICurrencyService) GetCurrency(ctx context.Context, c *rate_domain.Rate) (float64, error) {
+func (m *MockICurrencyService) GetCurrency(ctx context.Context, c *rate.Rate) (float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrency", ctx, c)
 	ret0, _ := ret[0].(float64)
@@ -113,7 +113,7 @@ func (m *MockIUserService) EXPECT() *MockIUserServiceMockRecorder {
 }
 
 // NewUser mocks base method.
-func (m *MockIUserService) NewUser(ctx context.Context, eu *user_domain.User) error {
+func (m *MockIUserService) NewUser(ctx context.Context, eu *user.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewUser", ctx, eu)
 	ret0, _ := ret[0].(error)

@@ -1,4 +1,4 @@
-package event_domain
+package notification
 
 // Notification domain that responses for notifying users.
 // It can be easily expanded for notify specific user group.

@@ -18,9 +18,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	mock_http "exchange/internal/controller/http/mocks"
-	"exchange/internal/domain/event_domain"
-	"exchange/internal/domain/rate_domain"
-	"exchange/internal/domain/user_domain"
+	"exchange/internal/domain/notification"
+	rate_domain "exchange/internal/domain/rate"
+	user_domain "exchange/internal/domain/user"
 )
 
 type mockServices struct {
@@ -133,7 +133,7 @@ func TestSendEmails(t *testing.T) {
 			wg.Add(1)
 
 			mockedServices.notificationService.EXPECT().
-				Notify(context.Background(), event_domain.DefaultNotification()).
+				Notify(context.Background(), notification.DefaultNotification()).
 				Return(test.expectedErrFromSendNotification).
 				Do(func(_, _ any) {
 					defer wg.Done()

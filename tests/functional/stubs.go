@@ -4,7 +4,7 @@ import (
 	"context"
 	"math/rand"
 
-	"exchange/internal/domain/rate_domain"
+	rate_domain "exchange/internal/domain/rate"
 )
 
 type thirdParyStubs struct{}

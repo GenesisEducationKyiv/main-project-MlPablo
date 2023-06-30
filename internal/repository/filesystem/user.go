@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"exchange/internal/domain/user_domain"
+	user_domain "exchange/internal/domain/user"
 )
 
 func (f *Repository) SaveUser(_ context.Context, eu *user_domain.User) error {

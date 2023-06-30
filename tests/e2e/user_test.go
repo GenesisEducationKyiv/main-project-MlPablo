@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-faker/faker/v4"
 
-	"exchange/internal/domain/user_domain"
+	user_domain "exchange/internal/domain/user"
 )
 
 func (suite *Suite) TestValidCreateUser() {

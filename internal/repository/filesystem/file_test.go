@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"exchange/internal/domain/user_domain"
+	user_domain "exchange/internal/domain/user"
 	"exchange/internal/repository/filesystem"
 )
 

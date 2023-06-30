@@ -1,9 +1,9 @@
-package currency_service
+package currency
 
 import (
 	"context"
 
-	"exchange/internal/domain/rate_domain"
+	rate_domain "exchange/internal/domain/rate"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/currency.go

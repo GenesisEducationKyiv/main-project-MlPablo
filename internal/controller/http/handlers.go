@@ -8,9 +8,9 @@ import (
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
 
-	"exchange/internal/domain/event_domain"
-	"exchange/internal/domain/rate_domain"
-	"exchange/internal/domain/user_domain"
+	"exchange/internal/domain/notification"
+	rate_domain "exchange/internal/domain/rate"
+	user_domain "exchange/internal/domain/user"
 )
 
 func (e *exchangeHandler) GetBtcToUahCurrency(c echo.Context) error {
@@ -32,7 +32,7 @@ func (e *exchangeHandler) SendEmails(c echo.Context) error {
 	go func() {
 		if err := e.services.NotificationService.Notify(
 			context.Background(),
-			event_domain.DefaultNotification(),
+			notification.DefaultNotification(),
 		); err != nil {
 			logrus.Errorf("error on sending emails: %v", err)
 		}

@@ -1,9 +1,9 @@
-package currency_service
+package currency
 
 import (
 	"context"
 
-	"exchange/internal/domain/rate_domain"
+	rate_domain "exchange/internal/domain/rate"
 )
 
 func (s *Service) GetCurrency(ctx context.Context, data *rate_domain.Rate) (float64, error) {

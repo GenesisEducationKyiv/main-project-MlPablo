@@ -1,4 +1,4 @@
-package rate_domain
+package rate
 
 import "errors"
 

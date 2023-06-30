@@ -7,17 +7,17 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"exchange/internal/repository/filesystem"
-	"exchange/internal/services/currency_service"
-	"exchange/internal/services/event_service"
-	"exchange/internal/services/user_service"
+	"exchange/internal/services/currency"
+	"exchange/internal/services/event"
+	"exchange/internal/services/user"
 )
 
 const testFilePath = "test_path.txt"
 
 type Services struct {
-	currecnyService *currency_service.Service
-	notifyService   *event_service.Service
-	userService     *user_service.Service
+	currecnyService *currency.Service
+	notifyService   *event.Service
+	userService     *user.Service
 }
 
 type Suite struct {
@@ -34,9 +34,9 @@ func (suite *Suite) SetupSuite() {
 
 	stubs := new(thirdParyStubs)
 
-	currecnyService := currency_service.NewCurrencyService(stubs)
-	userService := user_service.NewUserService(fileRepo)
-	notificationService := event_service.NewNotificationService(fileRepo, currecnyService, stubs)
+	currecnyService := currency.NewCurrencyService(stubs)
+	userService := user.NewUserService(fileRepo)
+	notificationService := event.NewNotificationService(fileRepo, currecnyService, stubs)
 
 	srvs := &Services{
 		currecnyService: currecnyService,

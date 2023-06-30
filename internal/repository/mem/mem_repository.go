@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"exchange/internal/domain/user_domain"
+	user_domain "exchange/internal/domain/user"
 )
 
 type Repository struct {

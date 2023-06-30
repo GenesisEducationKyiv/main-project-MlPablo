@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"exchange/internal/domain/rate_domain"
+	rate_domain "exchange/internal/domain/rate"
 )
 
 const (

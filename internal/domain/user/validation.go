@@ -1,4 +1,4 @@
-package user_domain
+package user
 
 import "net/mail"
 

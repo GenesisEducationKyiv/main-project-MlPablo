@@ -1,9 +1,9 @@
-package event_service
+package event
 
 import (
 	"context"
 
-	"exchange/internal/domain/rate_domain"
+	rate_domain "exchange/internal/domain/rate"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/notification.go

@@ -1,4 +1,4 @@
-package user_domain
+package user
 
 //go:generate mockgen -source=user.go -destination=mocks/user.go
 

@@ -4,16 +4,16 @@ import (
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/repository/filesystem"
-	"exchange/internal/services/currency_service"
-	"exchange/internal/services/event_service"
-	"exchange/internal/services/user_service"
+	"exchange/internal/services/currency"
+	"exchange/internal/services/event"
+	"exchange/internal/services/user"
 	"exchange/utils"
 )
 
 type Services struct {
-	CurrencyService     *currency_service.Service
-	UserService         *user_service.Service
-	NotificationService *event_service.Service
+	CurrencyService     *currency.Service
+	UserService         *user.Service
+	NotificationService *event.Service
 }
 
 type ThirdPartyServices struct {
@@ -34,13 +34,13 @@ func createServices() (*Services, error) {
 	tds := createThirdPartyServices()
 
 	return &Services{
-		UserService: user_service.NewUserService(repo.fileRepo),
-		NotificationService: event_service.NewNotificationService(
+		UserService: user.NewUserService(repo.fileRepo),
+		NotificationService: event.NewNotificationService(
 			repo.fileRepo,
 			tds.CurrencyAPI,
 			tds.MailSender,
 		),
-		CurrencyService: currency_service.NewCurrencyService(tds.CurrencyAPI),
+		CurrencyService: currency.NewCurrencyService(tds.CurrencyAPI),
 	}, nil
 }
 
