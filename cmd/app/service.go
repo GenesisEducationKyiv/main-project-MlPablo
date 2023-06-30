@@ -37,7 +37,15 @@ func createServices() (*Services, error) {
 
 	tds := createThirdPartyServices()
 
-	currencyService := currency.NewCurrencyService(tds.CoingeckoAPI)
+	if err = tds.BinanceAPI.SetNext(tds.CurrencyAPI); err != nil {
+		return nil, err
+	}
+
+	if err = tds.CurrencyAPI.SetNext(tds.CoingeckoAPI); err != nil {
+		return nil, err
+	}
+
+	currencyService := currency.NewCurrencyService(tds.BinanceAPI)
 
 	return &Services{
 		UserService: user.NewUserService(repo.fileRepo),
@@ -99,3 +107,32 @@ func createRepositories() (*Repositories, error) {
 		fileRepo: fileRepo,
 	}, nil
 }
+
+// type Chain interface {
+// 	GetCurrency(ctx context.Context, r *rate.Rate) (float64, error)
+// 	SetNext(next Chain)
+// }
+//
+// type provider struct {
+// 	next Chain
+// }
+//
+// func NewProvider() *provider {
+// 	return new(provider)
+// }
+//
+// func (p *provider) SetNext(next Chain) {
+// 	p.next = next
+// }
+//
+// func (p *provider) GetCurrency(ctx context.Context, r *rate.Rate) (float64, error) {
+// 	rate, err := p.next.GetCurrency(ctx, r)
+// 	if err != nil {
+// 		if p.next == nil {
+// 			return 0, err
+// 		}
+// 		return p.next.GetCurrency(ctx, r)
+// 	}
+//
+// 	return rate, nil
+// }

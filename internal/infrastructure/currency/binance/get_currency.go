@@ -23,6 +23,10 @@ type getPriceResponse struct {
 func (api *BinanceAPI) GetCurrency(ctx context.Context, cur *rate.Rate) (float64, error) {
 	byteResp, err := api.tickerPrice(ctx, cur.BaseCurrency, cur.QuoteCurrency)
 	if err != nil {
+		if api.next != nil {
+			return api.next.GetCurrency(ctx, cur)
+		}
+
 		return 0, err
 	}
 

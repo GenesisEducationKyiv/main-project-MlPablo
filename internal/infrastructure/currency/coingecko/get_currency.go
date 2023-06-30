@@ -20,6 +20,10 @@ const (
 func (api *CoingeckoAPI) GetCurrency(ctx context.Context, cur *rate.Rate) (float64, error) {
 	resp, err := api.simplePrice(ctx, cur.BaseCurrency, cur.QuoteCurrency)
 	if err != nil {
+		if api.next != nil {
+			return api.next.GetCurrency(ctx, cur)
+		}
+
 		return 0, err
 	}
 
