@@ -1,6 +1,8 @@
 package app
 
 import (
+	"exchange/internal/infrastructure/currency/binance"
+	"exchange/internal/infrastructure/currency/coingecko"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/repository/filesystem"
@@ -17,8 +19,10 @@ type Services struct {
 }
 
 type ThirdPartyServices struct {
-	MailSender  *mail.EmailSender
-	CurrencyAPI *currencyapi.CurrencyAPI
+	MailSender   *mail.EmailSender
+	CurrencyAPI  *currencyapi.CurrencyAPI
+	BinanceAPI   *binance.BinanceAPI
+	CoingeckoAPI *coingecko.CoingeckoAPI
 }
 
 type Repositories struct {
@@ -33,14 +37,16 @@ func createServices() (*Services, error) {
 
 	tds := createThirdPartyServices()
 
+	currencyService := currency.NewCurrencyService(tds.CoingeckoAPI)
+
 	return &Services{
 		UserService: user.NewUserService(repo.fileRepo),
 		NotificationService: event.NewNotificationService(
 			repo.fileRepo,
-			tds.CurrencyAPI,
+			currencyService,
 			tds.MailSender,
 		),
-		CurrencyService: currency.NewCurrencyService(tds.CurrencyAPI),
+		CurrencyService: currencyService,
 	}, nil
 }
 
@@ -61,9 +67,23 @@ func createThirdPartyServices() *ThirdPartyServices {
 		),
 	)
 
+	binanceAPI := binance.NewBinanceApi(
+		binance.NewConfig(
+			envGet("BINANCE_URL"),
+		),
+	)
+
+	coingeckoAPI := coingecko.NewCoingeckoApi(
+		coingecko.NewConfig(
+			envGet("COINGECKO_URL"),
+		),
+	)
+
 	return &ThirdPartyServices{
-		MailSender:  mailSender,
-		CurrencyAPI: currencyAPI,
+		MailSender:   mailSender,
+		CurrencyAPI:  currencyAPI,
+		BinanceAPI:   binanceAPI,
+		CoingeckoAPI: coingeckoAPI,
 	}
 }
 
