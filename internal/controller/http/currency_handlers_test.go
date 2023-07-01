@@ -17,21 +17,23 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"exchange/internal/domain"
-	mock_domain "exchange/internal/domain/mocks"
+	mock_http "exchange/internal/controller/http/mocks"
+	"exchange/internal/domain/notification"
+	rate_domain "exchange/internal/domain/rate"
+	user_domain "exchange/internal/domain/user"
 )
 
 type mockServices struct {
-	currencyService     *mock_domain.MockICurrencyService
-	userService         *mock_domain.MockIUserService
-	notificationService *mock_domain.MockINotificationService
+	currencyService     *mock_http.MockICurrencyService
+	userService         *mock_http.MockIUserService
+	notificationService *mock_http.MockINotificationService
 }
 
 func getMockedServices(ctrl *gomock.Controller) *mockServices {
 	return &mockServices{
-		currencyService:     mock_domain.NewMockICurrencyService(ctrl),
-		userService:         mock_domain.NewMockIUserService(ctrl),
-		notificationService: mock_domain.NewMockINotificationService(ctrl),
+		currencyService:     mock_http.NewMockICurrencyService(ctrl),
+		userService:         mock_http.NewMockIUserService(ctrl),
+		notificationService: mock_http.NewMockINotificationService(ctrl),
 	}
 }
 
@@ -74,7 +76,7 @@ func TestGetCurrency(t *testing.T) {
 			mockedServices := getMockedServices(ctrl)
 
 			mockedServices.currencyService.EXPECT().
-				GetCurrency(context.Background(), domain.GetBitcoinToUAH()).
+				GetCurrency(context.Background(), rate_domain.GetBitcoinToUAH()).
 				Return(test.expectedRate, test.expectedErrFromCurrency)
 
 			e := echo.New()
@@ -131,7 +133,7 @@ func TestSendEmails(t *testing.T) {
 			wg.Add(1)
 
 			mockedServices.notificationService.EXPECT().
-				Notify(context.Background(), domain.DefaultNotification()).
+				Notify(context.Background(), notification.DefaultNotification()).
 				Return(test.expectedErrFromSendNotification).
 				Do(func(_, _ any) {
 					defer wg.Done()
@@ -168,7 +170,7 @@ func TestCreateMailSubscriber(t *testing.T) {
 			name: "valid case",
 			serviceSetup: func(m *mockServices, a args) {
 				m.userService.EXPECT().
-					NewUser(context.Background(), domain.NewUser(a.email)).
+					NewUser(context.Background(), user_domain.NewUser(a.email)).
 					Return(nil)
 			},
 			args: args{
@@ -188,8 +190,8 @@ func TestCreateMailSubscriber(t *testing.T) {
 			name: "email already exist",
 			serviceSetup: func(m *mockServices, a args) {
 				m.userService.EXPECT().
-					NewUser(context.Background(), domain.NewUser(a.email)).
-					Return(domain.ErrAlreadyExist)
+					NewUser(context.Background(), user_domain.NewUser(a.email)).
+					Return(user_domain.ErrAlreadyExist)
 			},
 			args: args{
 				email: "some@email.com",
@@ -222,69 +224,6 @@ func TestCreateMailSubscriber(t *testing.T) {
 			assert.NoError(t, handlers.CreateMailSubscriber(c))
 
 			assert.Equal(t, test.expectedStatusCode, rec.Code)
-		})
-	}
-}
-
-func TestGetCurrency21(t *testing.T) {
-	tc := []struct {
-		name                    string
-		expectedErrFromCurrency error
-		expectedRate            float64
-		expectedStatusCode      int
-	}{
-		{
-			name:                    "valid case",
-			expectedErrFromCurrency: nil,
-			expectedRate:            rand.Float64(),
-			expectedStatusCode:      http.StatusOK,
-		},
-		{
-			name:                    "currency service error",
-			expectedErrFromCurrency: errors.New("dummyErr"),
-			expectedRate:            0,
-			expectedStatusCode:      http.StatusInternalServerError,
-		},
-	}
-
-	for _, test := range tc {
-		t.Run(test.name, func(t *testing.T) {
-			ctrl := gomock.NewController(t)
-			defer ctrl.Finish()
-
-			mockedServices := getMockedServices(ctrl)
-
-			mockedServices.currencyService.EXPECT().
-				GetCurrency(context.Background(), domain.GetBitcoinToUAH()).
-				Return(test.expectedRate, test.expectedErrFromCurrency)
-
-			e := echo.New()
-
-			handlers := getMockedExchangeHandler(mockedServices)
-
-			RegisterHandlers(e, &Services{
-				CurrencyService:     handlers.services.CurrencyService,
-				UserService:         handlers.services.UserService,
-				NotificationService: handlers.services.NotificationService,
-			})
-
-			req := httptest.NewRequest(http.MethodGet, "/api/rate", nil)
-			rec := httptest.NewRecorder()
-			e.ServeHTTP(rec, req)
-
-			assert.Equal(t, test.expectedStatusCode, rec.Code)
-			if test.expectedErrFromCurrency != nil {
-				return
-			}
-
-			respBody, err := io.ReadAll(rec.Body)
-			require.NoError(t, err)
-
-			var gotResponse float64
-
-			err = json.Unmarshal(respBody, &gotResponse)
-			require.NoError(t, err)
-			assert.Equal(t, test.expectedRate, gotResponse)
 		})
 	}
 }

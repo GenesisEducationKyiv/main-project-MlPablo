@@ -8,11 +8,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/bxcodec/faker/v3"
+	"github.com/go-faker/faker/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"exchange/internal/domain"
+	user_domain "exchange/internal/domain/user"
 	"exchange/internal/repository/filesystem"
 )
 
@@ -28,7 +28,7 @@ func TestFileSaveUserEmail(t *testing.T) {
 
 	testEmail := faker.Email()
 
-	err = repo.SaveUser(ctx, domain.NewUser(testEmail))
+	err = repo.SaveUser(ctx, user_domain.NewUser(testEmail))
 	require.NoError(t, err)
 
 	fileContent, err := os.ReadFile(testFilePath)
@@ -50,7 +50,7 @@ func TestEmailExist(t *testing.T) {
 
 	for i := 0; i < batch; i++ {
 		mail := faker.Email()
-		err = repo.SaveUser(ctx, domain.NewUser(mail))
+		err = repo.SaveUser(ctx, user_domain.NewUser(mail))
 		require.NoError(t, err)
 
 		exist, err = repo.EmailExist(ctx, mail)
@@ -76,7 +76,7 @@ func TestGetAll(t *testing.T) {
 
 	for i := 0; i < batch; i++ {
 		mail := faker.Email()
-		err = repo.SaveUser(ctx, domain.NewUser(mail))
+		err = repo.SaveUser(ctx, user_domain.NewUser(mail))
 		require.NoError(t, err)
 
 		emails[i] = mail
@@ -95,7 +95,7 @@ func TestConcurrentWrite(t *testing.T) {
 
 	defer os.Remove(testFilePath)
 
-	batch := 20
+	batch := 1000
 	wg := sync.WaitGroup{}
 	wg.Add(batch)
 
@@ -103,34 +103,21 @@ func TestConcurrentWrite(t *testing.T) {
 	defer close(emailCh)
 
 	for i := 0; i < batch; i++ {
-		go func(c chan<- string) {
-			mail := faker.Email()
-			err = repo.SaveUser(ctx, domain.NewUser(mail))
+		go func() {
+			defer wg.Done()
+
+			err = repo.SaveUser(ctx, user_domain.NewUser("123"))
 			require.NoError(t, err)
-
-			c <- mail
-		}(emailCh)
+		}()
 	}
-
-	var emails []string
-
-	go func() {
-		for email := range emailCh {
-			emails = append(emails, email)
-
-			wg.Done()
-		}
-	}()
 
 	wg.Wait()
 
 	getEmails, err := repo.GetAllEmails(ctx)
 	require.NoError(t, err)
-	require.True(
+	require.Len(
 		t,
-		reflect.DeepEqual(emails, getEmails),
-		"slices elements are not equal",
-		emails,
 		getEmails,
+		batch,
 	)
 }

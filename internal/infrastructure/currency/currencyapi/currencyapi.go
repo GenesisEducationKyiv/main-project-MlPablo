@@ -3,12 +3,13 @@ package currencyapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
 
-	"exchange/internal/domain"
+	rate_domain "exchange/internal/domain/rate"
 )
 
 const (
@@ -30,7 +31,7 @@ func NewCurrencyAPI(cfg *Config) *CurrencyAPI {
 	}
 }
 
-func (api *CurrencyAPI) GetCurrency(ctx context.Context, cur *domain.Currency) (float64, error) {
+func (api *CurrencyAPI) GetCurrency(ctx context.Context, cur *rate_domain.Rate) (float64, error) {
 	resp, err := api.makeLatestCurrencyRequest(ctx, cur.BaseCurrency, cur.QuoteCurrency)
 	if err != nil {
 		return 0, err
@@ -70,7 +71,13 @@ func (api *CurrencyAPI) makeLatestCurrencyRequest(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, domain.ErrInvalidStatus
+		return nil, errors.Join(
+			fmt.Errorf(
+				"cant reach currencyapi. code:%v",
+				resp.StatusCode,
+			),
+			rate_domain.ErrThirdPartyRequest,
+		)
 	}
 
 	return io.ReadAll(resp.Body)
@@ -101,6 +108,11 @@ func getValueFromResponse(m []byte, curr string) (float64, error) {
 		valueField = "value"
 	)
 
+	parserErr := errors.Join(
+		fmt.Errorf("unable to get field: %s, from: %s", curr, m),
+		rate_domain.ErrThirdPartyRequest,
+	)
+
 	resp := make(map[string]interface{})
 
 	if err := json.Unmarshal(m, &resp); err != nil {
@@ -109,17 +121,17 @@ func getValueFromResponse(m []byte, curr string) (float64, error) {
 
 	data, ok := resp[dataField].(map[string]interface{})
 	if !ok {
-		return 0, domain.ErrInvalidStatus
+		return 0, parserErr
 	}
 
 	info, ok := data[curr].(map[string]interface{})
 	if !ok {
-		return 0, domain.ErrInvalidStatus
+		return 0, parserErr
 	}
 
 	val, ok := info[valueField].(float64)
 	if !ok {
-		return 0, domain.ErrInvalidStatus
+		return 0, parserErr
 	}
 
 	return val, nil

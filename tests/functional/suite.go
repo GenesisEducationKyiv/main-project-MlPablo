@@ -1,20 +1,23 @@
 package functional
 
 import (
+	"os"
+
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 
-	"exchange/internal/domain"
 	"exchange/internal/repository/filesystem"
-	"exchange/internal/services"
+	"exchange/internal/services/currency"
+	"exchange/internal/services/event"
+	"exchange/internal/services/user"
 )
 
 const testFilePath = "test_path.txt"
 
 type Services struct {
-	currecnyService domain.ICurrencyService
-	notifyService   domain.INotificationService
-	userService     domain.IUserService
+	currecnyService *currency.Service
+	notifyService   *event.Service
+	userService     *user.Service
 }
 
 type Suite struct {
@@ -31,9 +34,9 @@ func (suite *Suite) SetupSuite() {
 
 	stubs := new(thirdParyStubs)
 
-	currecnyService := services.NewCurrencyService(stubs)
-	userService := services.NewUserService(fileRepo)
-	notificationService := services.NewNotificationService(fileRepo, currecnyService, stubs)
+	currecnyService := currency.NewCurrencyService(stubs)
+	userService := user.NewUserService(fileRepo)
+	notificationService := event.NewNotificationService(fileRepo, currecnyService, stubs)
 
 	srvs := &Services{
 		currecnyService: currecnyService,
@@ -46,5 +49,5 @@ func (suite *Suite) SetupSuite() {
 }
 
 func (suite *Suite) AfterTest(_, _ string) {
-	suite.NoError(suite.repo.DeleteFile())
+	os.Remove(testFilePath)
 }

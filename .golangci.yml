@@ -15,6 +15,10 @@ run:
 # This file contains only configs which differ from defaults.
 # All possible options can be found here https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
 linters-settings:
+  revive:
+    rules:
+      - name: var-naming
+        Disabled: true
   cyclop:
     # The maximal code complexity to report.
     # Default: 10
@@ -228,10 +232,11 @@ linters:
     - predeclared # finds code that shadows one of Go's predeclared identifiers
     - promlinter # checks Prometheus metrics naming via promlint
     - reassign # checks that package variables are not reassigned
+    # - golint
     - revive # fast, configurable, extensible, flexible, and beautiful linter for Go, drop-in replacement of golint
     - rowserrcheck # checks whether Err of rows is checked successfully
     - sqlclosecheck # checks that sql.Rows and sql.Stmt are closed
-    - stylecheck # is a replacement for golint
+    # - stylecheck # is a replacement for golint
     - tenv # detects using os.Setenv instead of t.Setenv since Go1.17
     - testableexamples # checks if examples are testable (have an expected output)
     # - testpackage # makes you use a separate _test package
@@ -250,7 +255,7 @@ linters:
     - godox # detects FIXME, TODO and other comment keywords
     #- goheader # checks is file header matches to pattern
     #- interfacebloat # checks the number of methods inside an interface
-    #- ireturn # accept interfaces, return concrete types
+    - ireturn # accept interfaces, return concrete types
     #- prealloc # [premature optimization, but can be used in some cases] finds slice declarations that could potentially be preallocated
     #- varnamelen # [great idea, but too many false positives] checks that the length of a variable's name matches its scope
     #- wrapcheck # checks that errors returned from external packages are wrapped

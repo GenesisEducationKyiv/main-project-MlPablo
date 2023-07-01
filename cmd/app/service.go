@@ -1,18 +1,19 @@
 package app
 
 import (
-	"exchange/internal/domain"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/repository/filesystem"
-	"exchange/internal/services"
+	"exchange/internal/services/currency"
+	"exchange/internal/services/event"
+	"exchange/internal/services/user"
 	"exchange/utils"
 )
 
 type Services struct {
-	CurrencyService     domain.ICurrencyService
-	UserService         domain.IUserService
-	NotificationService domain.INotificationService
+	CurrencyService     *currency.Service
+	UserService         *user.Service
+	NotificationService *event.Service
 }
 
 type ThirdPartyServices struct {
@@ -21,7 +22,7 @@ type ThirdPartyServices struct {
 }
 
 type Repositories struct {
-	UserRepo domain.UserRepository
+	fileRepo *filesystem.Repository
 }
 
 func createServices() (*Services, error) {
@@ -33,13 +34,13 @@ func createServices() (*Services, error) {
 	tds := createThirdPartyServices()
 
 	return &Services{
-		UserService: services.NewUserService(repo.UserRepo),
-		NotificationService: services.NewNotificationService(
-			repo.UserRepo,
+		UserService: user.NewUserService(repo.fileRepo),
+		NotificationService: event.NewNotificationService(
+			repo.fileRepo,
 			tds.CurrencyAPI,
 			tds.MailSender,
 		),
-		CurrencyService: services.NewCurrencyService(tds.CurrencyAPI),
+		CurrencyService: currency.NewCurrencyService(tds.CurrencyAPI),
 	}, nil
 }
 
@@ -67,7 +68,7 @@ func createThirdPartyServices() *ThirdPartyServices {
 }
 
 func createRepositories() (*Repositories, error) {
-	userRepo, err := filesystem.NewFileSystemRepository(
+	fileRepo, err := filesystem.NewFileSystemRepository(
 		utils.TryGetEnvDefault("FILE_STORE_PATH", "./file_storage.txt"),
 	)
 	if err != nil {
@@ -75,6 +76,6 @@ func createRepositories() (*Repositories, error) {
 	}
 
 	return &Repositories{
-		UserRepo: userRepo,
+		fileRepo: fileRepo,
 	}, nil
 }
