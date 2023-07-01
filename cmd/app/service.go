@@ -1,6 +1,8 @@
 package app
 
 import (
+	"github.com/sirupsen/logrus"
+
 	"exchange/internal/infrastructure/currency/binance"
 	"exchange/internal/infrastructure/currency/coingecko"
 	"exchange/internal/infrastructure/currency/currencyapi"
@@ -72,19 +74,19 @@ func createThirdPartyServices() *ThirdPartyServices {
 		currencyapi.NewConfig(
 			envGet("CURR_API_KEY"),
 			envGet("CURR_URL"),
-		),
+		), currencyapi.WithLogger(logrus.StandardLogger()),
 	)
 
 	binanceAPI := binance.NewBinanceApi(
 		binance.NewConfig(
 			envGet("BINANCE_URL"),
-		),
+		), binance.WithLogger(logrus.StandardLogger()),
 	)
 
 	coingeckoAPI := coingecko.NewCoingeckoApi(
 		coingecko.NewConfig(
 			envGet("COINGECKO_URL"),
-		),
+		), coingecko.WithLogger(logrus.StandardLogger()),
 	)
 
 	return &ThirdPartyServices{
@@ -107,32 +109,3 @@ func createRepositories() (*Repositories, error) {
 		fileRepo: fileRepo,
 	}, nil
 }
-
-// type Chain interface {
-// 	GetCurrency(ctx context.Context, r *rate.Rate) (float64, error)
-// 	SetNext(next Chain)
-// }
-//
-// type provider struct {
-// 	next Chain
-// }
-//
-// func NewProvider() *provider {
-// 	return new(provider)
-// }
-//
-// func (p *provider) SetNext(next Chain) {
-// 	p.next = next
-// }
-//
-// func (p *provider) GetCurrency(ctx context.Context, r *rate.Rate) (float64, error) {
-// 	rate, err := p.next.GetCurrency(ctx, r)
-// 	if err != nil {
-// 		if p.next == nil {
-// 			return 0, err
-// 		}
-// 		return p.next.GetCurrency(ctx, r)
-// 	}
-//
-// 	return rate, nil
-// }

@@ -19,11 +19,17 @@ type BinanceAPI struct {
 	next Chain
 }
 
-func NewBinanceApi(cfg *Config) *BinanceAPI {
-	return &BinanceAPI{
+func NewBinanceApi(cfg *Config, opts ...Option) *BinanceAPI {
+	api := &BinanceAPI{
 		cfg: cfg,
-		cli: http.DefaultClient,
+		cli: &http.Client{Transport: http.DefaultTransport},
 	}
+
+	for _, opt := range opts {
+		opt(api)
+	}
+
+	return api
 }
 
 func (api *BinanceAPI) SetNext(chain any) error {

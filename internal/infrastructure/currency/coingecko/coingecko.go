@@ -20,12 +20,18 @@ type CoingeckoAPI struct {
 	next   Chain
 }
 
-func NewCoingeckoApi(cfg *Config) *CoingeckoAPI {
-	return &CoingeckoAPI{
+func NewCoingeckoApi(cfg *Config, opts ...Option) *CoingeckoAPI {
+	api := &CoingeckoAPI{
 		cfg:    cfg,
-		cli:    http.DefaultClient,
+		cli:    &http.Client{Transport: http.DefaultTransport},
 		mapper: initMapper(),
 	}
+
+	for _, opt := range opts {
+		opt(api)
+	}
+
+	return api
 }
 
 func initMapper() map[string]string {

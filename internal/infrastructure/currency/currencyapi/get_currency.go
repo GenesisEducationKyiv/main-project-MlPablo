@@ -55,7 +55,7 @@ func (api *CurrencyAPI) makeLatestCurrencyRequest(
 	q.Add(currencies, strings.ToUpper(quote))
 	req.URL.RawQuery = q.Encode()
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := api.cli.Do(req)
 	if err != nil {
 		return nil, err
 	}

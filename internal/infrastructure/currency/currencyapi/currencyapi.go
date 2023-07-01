@@ -3,6 +3,7 @@ package currencyapi
 import (
 	"context"
 	"errors"
+	"net/http"
 
 	"exchange/internal/domain/rate"
 )
@@ -14,16 +15,24 @@ type Chain interface {
 
 type CurrencyAPI struct {
 	cfg  *Config
+	cli  *http.Client
 	next Chain
 }
 
 // This is the implementation of logic that can get currency.
 // So service doesn't need to know about how we do this, and we can implement any currency api and interfaces we want
 // I'm not sure about putting this into infrastructure folder.
-func NewCurrencyAPI(cfg *Config) *CurrencyAPI {
-	return &CurrencyAPI{
+func NewCurrencyAPI(cfg *Config, opts ...Option) *CurrencyAPI {
+	api := &CurrencyAPI{
 		cfg: cfg,
+		cli: &http.Client{Transport: http.DefaultTransport},
 	}
+
+	for _, opt := range opts {
+		opt(api)
+	}
+
+	return api
 }
 
 func (api *CurrencyAPI) SetNext(chain any) error {
