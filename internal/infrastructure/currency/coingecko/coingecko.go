@@ -8,6 +8,8 @@ import (
 	"exchange/internal/domain/rate"
 )
 
+//go:generate mockgen -source=coingecko.go -destination=mocks/coingecko.go
+
 type Chain interface {
 	GetCurrency(ctx context.Context, cur *rate.Rate) (float64, error)
 	SetNext(any) error
