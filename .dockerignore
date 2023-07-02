@@ -1,0 +1,8 @@
+.gitignore
+.golangci.yml
+Makerfile
+README.md
+todo.txt
+tests/
+build/
+.github/
