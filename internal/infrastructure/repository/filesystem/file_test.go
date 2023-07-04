@@ -21,7 +21,7 @@ const testFilePath = "test.txt"
 func TestFileSaveUserEmail(t *testing.T) {
 	ctx := context.Background()
 
-	repo, err := filesystem.NewFileSystemRepository(testFilePath)
+	repo, err := filesystem.NewFileSystemRepository(&filesystem.Config{testFilePath})
 	require.NoError(t, err)
 
 	defer os.Remove(testFilePath)
@@ -41,7 +41,7 @@ func TestEmailExist(t *testing.T) {
 	ctx := context.Background()
 	batch := 10
 
-	repo, err := filesystem.NewFileSystemRepository(testFilePath)
+	repo, err := filesystem.NewFileSystemRepository(&filesystem.Config{testFilePath})
 	require.NoError(t, err)
 
 	defer os.Remove(testFilePath)
@@ -67,7 +67,7 @@ func TestGetAll(t *testing.T) {
 	ctx := context.Background()
 	batch := 20
 
-	repo, err := filesystem.NewFileSystemRepository(testFilePath)
+	repo, err := filesystem.NewFileSystemRepository(&filesystem.Config{testFilePath})
 	require.NoError(t, err)
 
 	defer os.Remove(testFilePath)
@@ -90,7 +90,7 @@ func TestGetAll(t *testing.T) {
 func TestConcurrentWrite(t *testing.T) {
 	ctx := context.Background()
 
-	repo, err := filesystem.NewFileSystemRepository(testFilePath)
+	repo, err := filesystem.NewFileSystemRepository(&filesystem.Config{testFilePath})
 	require.NoError(t, err)
 
 	defer os.Remove(testFilePath)

@@ -99,7 +99,7 @@ func createThirdPartyServices() *ThirdPartyServices {
 
 func createRepositories() (*Repositories, error) {
 	fileRepo, err := filesystem.NewFileSystemRepository(
-		utils.TryGetEnvDefault("FILE_STORE_PATH", "./file_storage.txt"),
+		&filesystem.Config{utils.TryGetEnvDefault("FILE_STORE_PATH", "./file_storage.txt")},
 	)
 	if err != nil {
 		return nil, err

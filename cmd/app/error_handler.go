@@ -10,8 +10,8 @@ func (app *App) errorHandler(ctx context.Context, cancel context.CancelFunc) {
 	for {
 		select {
 		case err := <-app.errorChan:
-			cancel()
 			logrus.Error(err)
+			cancel()
 		case <-ctx.Done():
 			return
 		}

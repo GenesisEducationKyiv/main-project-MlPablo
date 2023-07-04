@@ -17,7 +17,7 @@ type INotificationService interface {
 }
 
 type ICurrencyService interface {
-	GetCurrency(ctx context.Context, c *rate.Rate) (float64, error)
+	GetCurrency(ctx context.Context, c *rate.Rate) (*rate.Currency, error)
 }
 
 type IUserService interface {

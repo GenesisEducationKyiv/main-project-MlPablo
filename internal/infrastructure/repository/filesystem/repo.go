@@ -13,15 +13,19 @@ import (
 // Get All operation made with file, just because I want to show read operation with filesystem)
 // Don't forget about locks.
 type Repository struct {
-	filePath string
+	cfg *Config
 	// file mutex
 	fm sync.RWMutex
 }
 
-func NewFileSystemRepository(filePath string) (*Repository, error) {
+type Config struct {
+	Path string
+}
+
+func NewFileSystemRepository(cfg *Config) (*Repository, error) {
 	f := &Repository{
-		filePath: filePath,
-		fm:       sync.RWMutex{},
+		cfg: cfg,
+		fm:  sync.RWMutex{},
 	}
 
 	return f, nil
