@@ -3,7 +3,7 @@ package event
 import (
 	"context"
 
-	rate_domain "exchange/internal/domain/rate"
+	"exchange/internal/domain/rate"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/notification.go
@@ -18,7 +18,7 @@ type UserRepository interface {
 }
 
 type ICurrencyService interface {
-	GetCurrency(ctx context.Context, c *rate_domain.Rate) (float64, error)
+	GetCurrency(ctx context.Context, c *rate.Rate) (float64, error)
 }
 
 type Service struct {

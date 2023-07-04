@@ -19,8 +19,8 @@ import (
 
 	mock_http "exchange/internal/controller/http/mocks"
 	"exchange/internal/domain/notification"
-	rate_domain "exchange/internal/domain/rate"
-	user_domain "exchange/internal/domain/user"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 )
 
 type mockServices struct {
@@ -76,7 +76,7 @@ func TestGetCurrency(t *testing.T) {
 			mockedServices := getMockedServices(ctrl)
 
 			mockedServices.currencyService.EXPECT().
-				GetCurrency(context.Background(), rate_domain.GetBitcoinToUAH()).
+				GetCurrency(context.Background(), rate.GetBitcoinToUAH()).
 				Return(test.expectedRate, test.expectedErrFromCurrency)
 
 			e := echo.New()
@@ -170,7 +170,7 @@ func TestCreateMailSubscriber(t *testing.T) {
 			name: "valid case",
 			serviceSetup: func(m *mockServices, a args) {
 				m.userService.EXPECT().
-					NewUser(context.Background(), user_domain.NewUser(a.email)).
+					NewUser(context.Background(), user.NewUser(a.email)).
 					Return(nil)
 			},
 			args: args{
@@ -190,8 +190,8 @@ func TestCreateMailSubscriber(t *testing.T) {
 			name: "email already exist",
 			serviceSetup: func(m *mockServices, a args) {
 				m.userService.EXPECT().
-					NewUser(context.Background(), user_domain.NewUser(a.email)).
-					Return(user_domain.ErrAlreadyExist)
+					NewUser(context.Background(), user.NewUser(a.email)).
+					Return(user.ErrAlreadyExist)
 			},
 			args: args{
 				email: "some@email.com",

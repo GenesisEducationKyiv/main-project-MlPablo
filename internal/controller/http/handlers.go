@@ -9,14 +9,14 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"exchange/internal/domain/notification"
-	rate_domain "exchange/internal/domain/rate"
-	user_domain "exchange/internal/domain/user"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 )
 
 func (e *exchangeHandler) GetBtcToUahCurrency(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	cur := rate_domain.GetBitcoinToUAH()
+	cur := rate.GetBitcoinToUAH()
 
 	resp, err := e.services.CurrencyService.GetCurrency(ctx, cur)
 	if err != nil {
@@ -46,15 +46,15 @@ func (e *exchangeHandler) SendEmails(c echo.Context) error {
 func (e *exchangeHandler) CreateMailSubscriber(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	user := user_domain.NewUser(c.FormValue("email"))
+	u := user.NewUser(c.FormValue("email"))
 
-	if err := user.Validate(); err != nil {
+	if err := u.Validate(); err != nil {
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
-	if err := e.services.UserService.NewUser(ctx, user); err != nil {
+	if err := e.services.UserService.NewUser(ctx, u); err != nil {
 		code := http.StatusInternalServerError
-		if errors.Is(err, user_domain.ErrAlreadyExist) {
+		if errors.Is(err, user.ErrAlreadyExist) {
 			code = http.StatusConflict
 		}
 

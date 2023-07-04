@@ -9,10 +9,10 @@ import (
 	"os"
 	"strings"
 
-	user_domain "exchange/internal/domain/user"
+	"exchange/internal/domain/user"
 )
 
-func (f *Repository) SaveUser(_ context.Context, eu *user_domain.User) error {
+func (f *Repository) SaveUser(_ context.Context, eu *user.User) error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 
