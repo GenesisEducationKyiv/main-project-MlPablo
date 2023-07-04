@@ -3,7 +3,7 @@ package app
 import (
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
-	"exchange/internal/repository/filesystem"
+	"exchange/internal/infrastructure/repository/filesystem"
 	"exchange/internal/services/currency"
 	"exchange/internal/services/event"
 	"exchange/internal/services/user"

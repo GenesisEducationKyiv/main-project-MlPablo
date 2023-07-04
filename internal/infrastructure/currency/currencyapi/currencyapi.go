@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	rate_domain "exchange/internal/domain/rate"
+	"exchange/internal/domain/rate"
 )
 
 const (
@@ -31,7 +31,7 @@ func NewCurrencyAPI(cfg *Config) *CurrencyAPI {
 	}
 }
 
-func (api *CurrencyAPI) GetCurrency(ctx context.Context, cur *rate_domain.Rate) (float64, error) {
+func (api *CurrencyAPI) GetCurrency(ctx context.Context, cur *rate.Rate) (float64, error) {
 	resp, err := api.makeLatestCurrencyRequest(ctx, cur.BaseCurrency, cur.QuoteCurrency)
 	if err != nil {
 		return 0, err
@@ -76,7 +76,7 @@ func (api *CurrencyAPI) makeLatestCurrencyRequest(
 				"cant reach currencyapi. code:%v",
 				resp.StatusCode,
 			),
-			rate_domain.ErrThirdPartyRequest,
+			rate.ErrThirdPartyRequest,
 		)
 	}
 
@@ -110,7 +110,7 @@ func getValueFromResponse(m []byte, curr string) (float64, error) {
 
 	parserErr := errors.Join(
 		fmt.Errorf("unable to get field: %s, from: %s", curr, m),
-		rate_domain.ErrThirdPartyRequest,
+		rate.ErrThirdPartyRequest,
 	)
 
 	resp := make(map[string]interface{})

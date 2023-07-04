@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo"
 
 	"exchange/internal/domain/notification"
-	rate_domain "exchange/internal/domain/rate"
-	user_domain "exchange/internal/domain/user"
+	"exchange/internal/domain/rate"
+	"exchange/internal/domain/user"
 )
 
 //go:generate mockgen -source=controller.go -destination=mocks/controller.go
@@ -17,11 +17,11 @@ type INotificationService interface {
 }
 
 type ICurrencyService interface {
-	GetCurrency(ctx context.Context, c *rate_domain.Rate) (float64, error)
+	GetCurrency(ctx context.Context, c *rate.Rate) (float64, error)
 }
 
 type IUserService interface {
-	NewUser(ctx context.Context, eu *user_domain.User) error
+	NewUser(ctx context.Context, eu *user.User) error
 }
 
 type Services struct {

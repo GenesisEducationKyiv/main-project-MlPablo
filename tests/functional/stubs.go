@@ -4,12 +4,12 @@ import (
 	"context"
 	"math/rand"
 
-	rate_domain "exchange/internal/domain/rate"
+	"exchange/internal/domain/rate"
 )
 
 type thirdParyStubs struct{}
 
-func (c *thirdParyStubs) GetCurrency(_ context.Context, _ *rate_domain.Rate) (float64, error) {
+func (c *thirdParyStubs) GetCurrency(_ context.Context, _ *rate.Rate) (float64, error) {
 	return rand.Float64(), nil //nolint:gosec // math/rand is ok here
 }
 

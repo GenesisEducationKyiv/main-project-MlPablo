@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 
-	rate_domain "exchange/internal/domain/rate"
+	"exchange/internal/domain/rate"
 	"exchange/internal/services/currency"
 	mock_currency "exchange/internal/services/currency/mocks"
 )
@@ -20,16 +20,16 @@ func TestGetCurrency(t *testing.T) {
 
 	const btcUahRate = 1_000_000.0
 
-	currencyAPI.EXPECT().GetCurrency(context.Background(), &rate_domain.Rate{
-		BaseCurrency:  rate_domain.BTC,
-		QuoteCurrency: rate_domain.UAH,
+	currencyAPI.EXPECT().GetCurrency(context.Background(), &rate.Rate{
+		BaseCurrency:  rate.BTC,
+		QuoteCurrency: rate.UAH,
 	}).Return(btcUahRate, nil)
 
 	currencyServiceMock := currency.NewCurrencyService(currencyAPI)
 
-	res, err := currencyServiceMock.GetCurrency(context.Background(), &rate_domain.Rate{
-		BaseCurrency:  rate_domain.BTC,
-		QuoteCurrency: rate_domain.UAH,
+	res, err := currencyServiceMock.GetCurrency(context.Background(), &rate.Rate{
+		BaseCurrency:  rate.BTC,
+		QuoteCurrency: rate.UAH,
 	})
 	require.NoError(t, err)
 	require.Equal(t, btcUahRate, res)
