@@ -7,44 +7,44 @@ import (
 
 	"github.com/go-faker/faker/v4"
 
-	user_domain "exchange/internal/domain/user"
+	"exchange/internal/domain/user"
 )
 
 func (suite *Suite) TestValidCreateUser() {
-	user := user_domain.NewUser(faker.Email())
+	u := user.NewUser(faker.Email())
 
 	rec := httptest.NewRecorder()
 
-	suite.createUser(user.Email, rec)
+	suite.createUser(u.Email, rec)
 
 	suite.Equal(http.StatusOK, rec.Code)
 
-	ok, err := suite.checkRowExistInFileDB(user.Email)
+	ok, err := suite.checkRowExistInFileDB(u.Email)
 	suite.Require().NoError(err)
 	suite.True(ok)
 }
 
 func (suite *Suite) TestInvalidEmail() {
-	user := user_domain.NewUser(faker.Word())
+	u := user.NewUser(faker.Word())
 
 	rec := httptest.NewRecorder()
 
-	suite.createUser(user.Email, rec)
+	suite.createUser(u.Email, rec)
 
 	suite.Equal(http.StatusBadRequest, rec.Code)
 }
 
 func (suite *Suite) TestSameEmail() {
-	user := user_domain.NewUser(faker.Email())
+	u := user.NewUser(faker.Email())
 
 	rec := httptest.NewRecorder()
 
-	suite.createUser(user.Email, rec)
+	suite.createUser(u.Email, rec)
 	suite.Equal(http.StatusOK, rec.Code)
 
 	rec = httptest.NewRecorder()
 
-	suite.createUser(user.Email, rec)
+	suite.createUser(u.Email, rec)
 	suite.Equal(http.StatusConflict, rec.Code)
 }
 

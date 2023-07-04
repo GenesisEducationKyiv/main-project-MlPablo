@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 
-	"exchange/internal/repository/filesystem"
+	"exchange/internal/infrastructure/repository/filesystem"
 	"exchange/internal/services/currency"
 	"exchange/internal/services/event"
 	"exchange/internal/services/user"

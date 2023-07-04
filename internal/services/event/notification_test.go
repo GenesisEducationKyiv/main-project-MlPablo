@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"exchange/internal/domain/notification"
-	rate_domain "exchange/internal/domain/rate"
+	"exchange/internal/domain/rate"
 	"exchange/internal/services/event"
 	mock_event "exchange/internal/services/event/mocks"
 )
@@ -25,9 +25,9 @@ func TestNotify(t *testing.T) {
 
 	emails := []string{"1@email", "2@email"}
 
-	currencyServiceMock.EXPECT().GetCurrency(context.Background(), &rate_domain.Rate{
-		BaseCurrency:  rate_domain.BTC,
-		QuoteCurrency: rate_domain.UAH,
+	currencyServiceMock.EXPECT().GetCurrency(context.Background(), &rate.Rate{
+		BaseCurrency:  rate.BTC,
+		QuoteCurrency: rate.UAH,
 	}).Return(btcUahRate, nil)
 	userRepoMock.EXPECT().
 		GetAllEmails(context.Background()).

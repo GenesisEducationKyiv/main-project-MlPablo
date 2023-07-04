@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	user_domain "exchange/internal/domain/user"
+	"exchange/internal/domain/user"
 )
 
 type Repository struct {
@@ -19,7 +19,7 @@ func NewMemoryRepository() *Repository {
 	}
 }
 
-func (m *Repository) SaveUser(_ context.Context, eu *user_domain.User) error {
+func (m *Repository) SaveUser(_ context.Context, eu *user.User) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -31,16 +31,16 @@ func (m *Repository) SaveUser(_ context.Context, eu *user_domain.User) error {
 func (m *Repository) GetByEmail(
 	_ context.Context,
 	email string,
-) (*user_domain.User, error) {
+) (*user.User, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
 	_, ok := m.db[email]
 	if !ok {
-		return nil, user_domain.ErrNotFound
+		return nil, user.ErrNotFound
 	}
 
-	return user_domain.NewUser(email), nil
+	return user.NewUser(email), nil
 }
 
 func (m *Repository) GetAllEmails(
