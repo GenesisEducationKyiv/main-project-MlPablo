@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+
+	"exchange/internal/domain/rate"
 )
 
 func (suite *Suite) TestGetRate() {
@@ -12,12 +14,12 @@ func (suite *Suite) TestGetRate() {
 	suite.getRate(rec)
 	suite.Require().Equal(http.StatusOK, rec.Code)
 
-	var respRate float64
+	var respRate rate.Currency
 
 	err := json.Unmarshal(rec.Body.Bytes(), &respRate)
 	suite.NoError(err)
 	suite.Require().Equal(http.StatusOK, rec.Code)
-	suite.Require().NotZero(respRate)
+	suite.Require().NotZero(respRate.Value)
 }
 
 func (suite *Suite) getRate(w http.ResponseWriter) {

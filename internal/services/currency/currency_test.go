@@ -19,6 +19,7 @@ func TestGetCurrency(t *testing.T) {
 	currencyAPI := mock_currency.NewMockICurrencyAPI(ctrl)
 
 	const btcUahRate = 1_000_000.0
+	// btcCurrency := rate.NewCurrency(btcUahRate)
 
 	currencyAPI.EXPECT().GetCurrency(context.Background(), &rate.Rate{
 		BaseCurrency:  rate.BTC,
@@ -32,5 +33,5 @@ func TestGetCurrency(t *testing.T) {
 		QuoteCurrency: rate.UAH,
 	})
 	require.NoError(t, err)
-	require.Equal(t, btcUahRate, res)
+	require.Equal(t, btcUahRate, res.Value)
 }

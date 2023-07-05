@@ -12,5 +12,5 @@ func (s *Service) GetCurrency(ctx context.Context, data *rate.Rate) (*rate.Curre
 		return nil, err
 	}
 
-	return &rate.Currency{Data: value}, nil
+	return &rate.Currency{Value: value}, nil
 }

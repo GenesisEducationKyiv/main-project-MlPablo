@@ -27,7 +27,9 @@ type Suite struct {
 }
 
 func (suite *Suite) SetupSuite() {
-	fileRepo, err := filesystem.NewFileSystemRepository(testFilePath)
+	fileRepo, err := filesystem.NewFileSystemRepository(&filesystem.Config{
+		Path: testFilePath,
+	})
 	if err != nil {
 		logrus.Fatal(err)
 	}

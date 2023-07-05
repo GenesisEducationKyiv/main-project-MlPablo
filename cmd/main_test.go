@@ -8,6 +8,6 @@ import (
 )
 
 func TestValidateApp(t *testing.T) {
-	err := fx.ValidateApp(CreateApp(make(chan error)))
+	err := fx.ValidateApp(CreateApp())
 	require.NoError(t, err)
 }

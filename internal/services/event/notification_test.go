@@ -21,18 +21,19 @@ func TestNotify(t *testing.T) {
 	currencyServiceMock := mock_event.NewMockICurrencyService(ctrl)
 	mailSender := mock_event.NewMockIMailService(ctrl)
 
-	const btcUahRate = 1_000_000.0
+	currency := rate.NewCurrency(1_000_000.0)
+	// const btcUahRate = 1_000_000.0
 
 	emails := []string{"1@email", "2@email"}
 
 	currencyServiceMock.EXPECT().GetCurrency(context.Background(), &rate.Rate{
 		BaseCurrency:  rate.BTC,
 		QuoteCurrency: rate.UAH,
-	}).Return(btcUahRate, nil)
+	}).Return(currency, nil)
 	userRepoMock.EXPECT().
 		GetAllEmails(context.Background()).
 		Return(emails, nil)
-	mailSender.EXPECT().SendEmail(context.Background(), btcUahRate, emails).Return(nil)
+	mailSender.EXPECT().SendEmail(context.Background(), currency.Value, emails).Return(nil)
 
 	notifierService := event.NewNotificationService(
 		userRepoMock,
