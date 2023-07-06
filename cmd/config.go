@@ -34,7 +34,7 @@ func NewCurrencyapiConfig() *currencyapi.Config {
 	)
 }
 
-func NewCoingechoConfig() *coingecko.Config {
+func NewCoingeckoConfig() *coingecko.Config {
 	return coingecko.NewConfig(
 		envGet("COINGECKO_URL"),
 	)

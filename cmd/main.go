@@ -40,7 +40,7 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			NewMailConfig,
 			NewCurrencyapiConfig,
 			NewFileSystemConfig,
-			NewCoingechoConfig,
+			NewCoingeckoConfig,
 			createChan,
 			fx.Annotate(
 				filesystem.NewFileSystemRepository,
@@ -95,15 +95,17 @@ func createChan() chan error {
 }
 
 func startServer(srv *echoserver.Server, ls fx.Lifecycle, errChan chan error) {
-	ls.Append(fx.Hook{
-		OnStart: func(_ context.Context) error {
-			go srv.Start(errChan)
-			return nil
+	ls.Append(
+		fx.Hook{
+			OnStart: func(_ context.Context) error {
+				go srv.Start(errChan)
+				return nil
+			},
+			OnStop: func(_ context.Context) error {
+				return srv.Stop()
+			},
 		},
-		OnStop: func(_ context.Context) error {
-			return srv.Stop()
-		},
-	})
+	)
 }
 
 func startErrorHandling(shutdowner fx.Shutdowner, errChan chan error) {
@@ -130,8 +132,8 @@ func registerCryptoChain(
 	return nil
 }
 
-func registerHttpHandlers(srv *http.Services, srva *echoserver.Server) {
-	http.RegisterHandlers(srva.GetEchoServer(), srv)
+func registerHttpHandlers(srv *http.Services, e *echoserver.Server) {
+	http.RegisterHandlers(e.GetEchoServer(), srv)
 }
 
 func NewServices(
