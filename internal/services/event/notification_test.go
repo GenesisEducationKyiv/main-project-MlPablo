@@ -22,7 +22,6 @@ func TestNotify(t *testing.T) {
 	mailSender := mock_event.NewMockIMailService(ctrl)
 
 	currency := rate.NewCurrency(1_000_000.0)
-	// const btcUahRate = 1_000_000.0
 
 	emails := []string{"1@email", "2@email"}
 
