@@ -7,12 +7,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.uber.org/fx"
 
+	"currency/internal/controller/grpc"
 	"currency/internal/controller/http"
 	"currency/internal/infrastructure/currency/binance"
 	"currency/internal/infrastructure/currency/coingecko"
 	"currency/internal/infrastructure/currency/currencyapi"
 	"currency/internal/services/currency"
 	echoserver "currency/pkg/echo"
+	"currency/pkg/grpc/server"
 )
 
 func main() {
@@ -30,11 +32,13 @@ func main() {
 func CreateApp() fx.Option { //nolint: ireturn // ok
 	return fx.Options(
 		fx.Provide(
-			NewServices,
+			NewHTTPServices,
+			NewGRPCServices,
 			NewBinanceConfig,
 			NewEchoConfig,
 			NewCurrencyapiConfig,
 			NewCoingeckoConfig,
+			NewGrpcConfig,
 			createChan,
 			func(cfg *currencyapi.Config) *currencyapi.CurrencyAPI {
 				return currencyapi.NewCurrencyAPI(
@@ -60,17 +64,17 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 				},
 				fx.As(new(currency.ICurrencyAPI)),
 			),
-			fx.Annotate(
-				currency.NewCurrencyService,
-				fx.As(new(http.ICurrencyService)),
-			),
+			currency.NewCurrencyService,
+			server.NewServer,
 			echoserver.New,
 		),
 		fx.Invoke(
 			startErrorHandling,
 			registerCryptoChain,
 			registerHttpHandlers,
-			startServer,
+			registerGRPCHandlers,
+			startHTTPServer,
+			startGRPCServer,
 		),
 	)
 }
@@ -79,7 +83,7 @@ func createChan() chan error {
 	return make(chan error)
 }
 
-func startServer(srv *echoserver.Server, ls fx.Lifecycle, errChan chan error) {
+func startHTTPServer(srv *echoserver.Server, ls fx.Lifecycle, errChan chan error) {
 	ls.Append(
 		fx.Hook{
 			OnStart: func(_ context.Context) error {
@@ -88,6 +92,21 @@ func startServer(srv *echoserver.Server, ls fx.Lifecycle, errChan chan error) {
 			},
 			OnStop: func(_ context.Context) error {
 				return srv.Stop()
+			},
+		},
+	)
+}
+
+func startGRPCServer(srv *server.Server, ls fx.Lifecycle, errChan chan error) {
+	ls.Append(
+		fx.Hook{
+			OnStart: func(_ context.Context) error {
+				srv.Run(errChan)
+				return nil
+			},
+			OnStop: func(_ context.Context) error {
+				srv.Stop()
+				return nil
 			},
 		},
 	)
@@ -121,10 +140,22 @@ func registerHttpHandlers(srv *http.Services, e *echoserver.Server) {
 	http.RegisterHandlers(e.GetEchoServer(), srv)
 }
 
-func NewServices(
-	c http.ICurrencyService,
+func registerGRPCHandlers(srv *grpc.Services, s *server.Server) {
+	grpc.RegisterHandlers(s.Server, srv)
+}
+
+func NewHTTPServices(
+	c *currency.Service,
 ) *http.Services {
 	return &http.Services{
+		CurrencyService: c,
+	}
+}
+
+func NewGRPCServices(
+	c *currency.Service,
+) *grpc.Services {
+	return &grpc.Services{
 		CurrencyService: c,
 	}
 }

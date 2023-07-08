@@ -5,6 +5,7 @@ import (
 	"currency/internal/infrastructure/currency/coingecko"
 	"currency/internal/infrastructure/currency/currencyapi"
 	echoserver "currency/pkg/echo"
+	"currency/pkg/grpc/server"
 	"currency/utils"
 )
 
@@ -31,4 +32,12 @@ func NewCoingeckoConfig() *coingecko.Config {
 
 func NewBinanceConfig() *binance.Config {
 	return binance.NewConfig(envGet("BINANCE_URL"))
+}
+
+func NewGrpcConfig() *server.Config {
+	return &server.Config{
+		GRPCAdress:   envGet("GRPC_ADDRESS"),
+		GRPCPort:     envGet("GRPC_PORT"),
+		GRPCProtocol: envGet("GRPC_PROTOCOL"),
+	}
 }
