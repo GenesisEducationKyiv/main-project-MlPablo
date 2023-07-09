@@ -7,9 +7,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 
-	user_domain "exchange/internal/domain/user"
-	"exchange/internal/services/user"
-	mock_user "exchange/internal/services/user/mocks"
+	user_domain "notifier/internal/domain/user"
+	"notifier/internal/services/user"
+	mock_user "notifier/internal/services/user/mocks"
 )
 
 func TestCreateUser(t *testing.T) {

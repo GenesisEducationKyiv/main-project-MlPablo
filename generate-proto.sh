@@ -14,3 +14,6 @@ CreateCurrency() {
 echo "Create services for currency microservice"
 CreateCurrency "currency"
 
+echo "Create services for notifier microservice"
+CreateCurrency "notifier"
+

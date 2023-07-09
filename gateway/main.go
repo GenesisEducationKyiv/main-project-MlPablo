@@ -9,8 +9,8 @@ import (
 
 func main() {
 	// Define the backend servers
-	currencyURL, _ := url.Parse("http://localhost:8001")
-	notifierURL, _ := url.Parse("http://localhost:8002")
+	currencyURL, _ := url.Parse("http://currency:8001")
+	notifierURL, _ := url.Parse("http://notifier:8002")
 
 	// Create the reverse proxy handler
 	proxyC := httputil.NewSingleHostReverseProxy(currencyURL)

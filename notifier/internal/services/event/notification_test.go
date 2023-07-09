@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"notifier/internal/domain/notification"
+	"notifier/internal/domain/rate"
 	"notifier/internal/services/event"
 	mock_event "notifier/internal/services/event/mocks"
 )

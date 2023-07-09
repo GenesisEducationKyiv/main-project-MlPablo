@@ -8,12 +8,13 @@ import (
 	"go.uber.org/fx"
 
 	"notifier/internal/controller/http"
+	"notifier/internal/infrastructure/grpc/currency"
 	"notifier/internal/infrastructure/mail"
 	"notifier/internal/infrastructure/repository/filesystem"
-	"notifier/internal/services/currency"
 	"notifier/internal/services/event"
 	"notifier/internal/services/user"
 	echoserver "notifier/pkg/echo"
+	"notifier/pkg/grpc/client"
 )
 
 func main() {
@@ -35,7 +36,9 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			NewEchoConfig,
 			NewMailConfig,
 			NewFileSystemConfig,
+			NewCurrencyGrpcConfig,
 			createChan,
+			client.NewConnection,
 			fx.Annotate(
 				filesystem.NewFileSystemRepository,
 				fx.As(new(user.UserRepository)),

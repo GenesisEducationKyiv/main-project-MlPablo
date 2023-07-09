@@ -4,6 +4,7 @@ import (
 	"notifier/internal/infrastructure/mail"
 	"notifier/internal/infrastructure/repository/filesystem"
 	echoserver "notifier/pkg/echo"
+	"notifier/pkg/grpc/client"
 	"notifier/utils"
 )
 
@@ -26,4 +27,11 @@ func NewMailConfig() *mail.Config {
 
 func NewFileSystemConfig() *filesystem.Config {
 	return &filesystem.Config{Path: utils.TryGetEnvDefault("FILE_STORE_PATH", "./file_storage.txt")}
+}
+
+func NewCurrencyGrpcConfig() *client.Config {
+	return &client.Config{
+		Address: envGet("GRPC_CURRENCY_ADDRESS"),
+		Port:    envGet("GRPC_PORT"),
+	}
 }

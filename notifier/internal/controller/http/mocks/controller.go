@@ -6,9 +6,8 @@ package mock_http
 
 import (
 	context "context"
-	notification "exchange/internal/domain/notification"
-	rate "exchange/internal/domain/rate"
-	user "exchange/internal/domain/user"
+	notification "notifier/internal/domain/notification"
+	user "notifier/internal/domain/user"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -49,44 +48,6 @@ func (m *MockINotificationService) Notify(ctx context.Context, n *notification.N
 func (mr *MockINotificationServiceMockRecorder) Notify(ctx, n interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Notify", reflect.TypeOf((*MockINotificationService)(nil).Notify), ctx, n)
-}
-
-// MockICurrencyService is a mock of ICurrencyService interface.
-type MockICurrencyService struct {
-	ctrl     *gomock.Controller
-	recorder *MockICurrencyServiceMockRecorder
-}
-
-// MockICurrencyServiceMockRecorder is the mock recorder for MockICurrencyService.
-type MockICurrencyServiceMockRecorder struct {
-	mock *MockICurrencyService
-}
-
-// NewMockICurrencyService creates a new mock instance.
-func NewMockICurrencyService(ctrl *gomock.Controller) *MockICurrencyService {
-	mock := &MockICurrencyService{ctrl: ctrl}
-	mock.recorder = &MockICurrencyServiceMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockICurrencyService) EXPECT() *MockICurrencyServiceMockRecorder {
-	return m.recorder
-}
-
-// GetCurrency mocks base method.
-func (m *MockICurrencyService) GetCurrency(ctx context.Context, c *rate.Rate) (*rate.Currency, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCurrency", ctx, c)
-	ret0, _ := ret[0].(*rate.Currency)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetCurrency indicates an expected call of GetCurrency.
-func (mr *MockICurrencyServiceMockRecorder) GetCurrency(ctx, c interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrency", reflect.TypeOf((*MockICurrencyService)(nil).GetCurrency), ctx, c)
 }
 
 // MockIUserService is a mock of IUserService interface.

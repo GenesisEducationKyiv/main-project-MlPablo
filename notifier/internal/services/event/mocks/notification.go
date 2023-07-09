@@ -6,7 +6,7 @@ package mock_event
 
 import (
 	context "context"
-	rate "exchange/internal/domain/rate"
+	rate "notifier/internal/domain/rate"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
