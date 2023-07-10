@@ -13,7 +13,7 @@ var envGet = utils.TryGetEnv[string] //nolint: gochecknoglobals// ok here
 
 func NewEchoConfig() *echoserver.Config {
 	return &echoserver.Config{
-		Address: utils.TryGetEnvDefault("SERVER_ADDR", "8080"),
+		Address: utils.TryGetEnvDefault("HTTP_SERVER_ADDR", "8080"),
 	}
 }
 

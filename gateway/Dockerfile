@@ -11,7 +11,7 @@ FROM alpine:latest
 WORKDIR /usr/src/app
 
 COPY --from=build-stage /usr/src/app/gateway .
-# COPY .env .
+COPY .env .
 
 EXPOSE 8080
 
