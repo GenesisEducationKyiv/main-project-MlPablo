@@ -1,0 +1,46 @@
+version: 1
+threshold:
+  compliance: 100
+  coverage: 80
+dependenciesRules:
+  - package: "**.domain.*"
+    shouldOnlyDependsOn:
+      internal:
+        - "**.domain.**"
+  - package: "**.services.**"
+    shouldOnlyDependsOn:
+      internal:
+        - "**.domain.**"
+  - package: "**.controller.**"
+    shouldOnlyDependsOn:
+      internal: ["**.domain.**", "**.services.**", "**.api.**"]
+  - package: "**.infrastructure.**"
+    shouldOnlyDependsOn:
+      internal: ["**.domain.**", "**.api.**"]
+  - package: "**.pkg.**"
+    shouldNotDependsOn:
+      internal:
+        - "**.domain.**"
+  - package: "tests.**"
+    shouldOnlyDependsOn:
+      internal:
+        - "internal.**"
+        - "utils"
+  - package: "cmd.**"
+    shouldOnlyDependsOn:
+      internal:
+        - "internal.**"
+        - "utils"
+        - "pkg.**"
+  - package: "utils"
+    shouldNotDependsOn:
+      internal:
+        - "internal.**"
+
+contentsRules:
+
+functionsRules:
+
+cyclesRules:
+
+namingRules:

@@ -31,7 +31,7 @@ e2e:
 
 test:
 	@echo "Running all tests..."
-	$(GOTEST) -v ./...
+	$(GOTEST) $$(go list -f '{{.Dir}}/...' -m | xargs) -count=1
 
 generate:
 	@echo "Generating go code..."
@@ -52,5 +52,9 @@ docker:
 	@echo "Running docker..."
 	docker build -t $(BINARY_NAME) .
 	docker run -p 8080:8080 $(BINARY_NAME)
+
+lint:
+	@echo "Running linter..."
+	golangci-lint run $$(go list -f '{{.Dir}}/...' -m | xargs)
 
 .PHONY: all build test clean run

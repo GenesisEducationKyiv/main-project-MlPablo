@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  currency:
+    container_name: currency
+    build:
+      context: ./currency
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - exchange
+  notifier:
+    container_name: notifier
+    build:
+      context: ./notifier
+      dockerfile: Dockerfile
+    depends_on:
+      - currency
+    restart: unless-stopped
+    networks:
+      - exchange
+  gateway:
+    container_name: gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - notifier
+      - currency
+    restart: unless-stopped
+    networks:
+      - exchange
+
+networks:
+  exchange:
+    driver: bridge
+

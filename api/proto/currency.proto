@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package grpc_currency_service;
+
+
+service CurrencyService {
+  rpc GetCurrency(Rate) returns (Currency) {}
+}
+
+message Rate {
+  string baseCurrency = 1;
+  string quoteCurrency = 2;
+}
+
+message Currency {
+ double value = 1; 
+}
