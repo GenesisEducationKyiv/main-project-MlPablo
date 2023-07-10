@@ -2,14 +2,18 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
+
+const HeaderTimeout = 3
 
 type Proxy struct {
 	currency *httputil.ReverseProxy
@@ -26,16 +30,22 @@ func main() {
 	registerCurrencyHandlers(proxy)
 	registerNotifierHandlers(proxy)
 
-	logrus.Fatal(http.ListenAndServe(":"+os.Getenv("HTTP_SERVER_ADDR"), nil))
+	server := &http.Server{
+		Addr:              ":" + os.Getenv("HTTP_SERVER_ADDR"),
+		ReadHeaderTimeout: HeaderTimeout * time.Second,
+	}
+
+	err := server.ListenAndServe()
+	if err != nil {
+		logrus.Fatal(err)
+	}
 }
 
 func loadProxy() *Proxy {
-	currencyURL, _ := url.Parse(
-		fmt.Sprintf("http://%s:%s", os.Getenv("CURRENCY_ADDRESS"), os.Getenv("CURRENCY_PORT")),
-	)
-	notifierURL, _ := url.Parse(
-		fmt.Sprintf("http://%s:%s", os.Getenv("NOTIFIER_ADDRESS"), os.Getenv("NOTIFIER_PORT")),
-	)
+	hp := net.JoinHostPort(os.Getenv("CURRENCY_ADDRESS"), os.Getenv("CURRENCY_PORT"))
+	hp1 := net.JoinHostPort(os.Getenv("NOTIFIER_ADDRESS"), os.Getenv("NOTIFIER_PORT"))
+	currencyURL, _ := url.Parse(fmt.Sprintf("http://%s", hp))
+	notifierURL, _ := url.Parse(fmt.Sprintf("http://%s", hp1))
 
 	return &Proxy{
 		currency: httputil.NewSingleHostReverseProxy(currencyURL),

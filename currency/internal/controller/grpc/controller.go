@@ -36,5 +36,6 @@ func (h *exchangeHandler) GetCurrency(
 	if err != nil {
 		return nil, err
 	}
+
 	return currencyDomainConvert(res), nil
 }

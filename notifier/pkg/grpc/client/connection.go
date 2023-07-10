@@ -14,8 +14,8 @@ type Connection struct {
 
 func NewConnection(conf *Config) (*grpc.ClientConn, error) {
 	logrus.Infof("Creating gRPC connection to %s...", conf.Address)
+
 	cl, err := grpc.Dial(
-		// ctx,
 		fmt.Sprintf("%s:%s", conf.Address, conf.Port),
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
