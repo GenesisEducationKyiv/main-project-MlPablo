@@ -39,8 +39,13 @@ jobs:
           cache: true
           reporter: github-check
 
-
       - name: Install go arch
         run: go install -v github.com/fdaines/arch-go@latest
-      - name: Run arch test
+
+      - name: Run currency arch test
+        working-directory: ./currency
+        run: arch-go -v
+
+      - name: Run notifier arch test
+        working-directory: ./notifier
         run: arch-go -v
