@@ -31,7 +31,7 @@ e2e:
 
 test:
 	@echo "Running all tests..."
-	$(GOTEST) -v ./...
+	$(GOTEST) $$(go list -f '{{.Dir}}/...' -m | xargs) -count=1
 
 generate:
 	@echo "Generating go code..."
