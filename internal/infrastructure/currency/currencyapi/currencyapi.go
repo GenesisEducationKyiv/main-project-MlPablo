@@ -1,24 +1,15 @@
 package currencyapi
 
 import (
-	"context"
-	"errors"
 	"net/http"
 
-	"exchange/internal/domain/rate"
+	"exchange/internal/infrastructure/currency"
 )
-
-//go:generate mockgen -source=currencyapi.go -destination=mocks/currencyapi.go
-
-type Chain interface {
-	GetCurrency(ctx context.Context, cur *rate.Rate) (float64, error)
-	SetNext(any) error
-}
 
 type CurrencyAPI struct {
 	cfg  *Config
 	cli  *http.Client
-	next Chain
+	next currency.IChain
 }
 
 // This is the implementation of logic that can get currency.
@@ -27,7 +18,7 @@ type CurrencyAPI struct {
 func NewCurrencyAPI(cfg *Config, opts ...Option) *CurrencyAPI {
 	api := &CurrencyAPI{
 		cfg: cfg,
-		cli: &http.Client{Transport: http.DefaultTransport},
+		cli: http.DefaultClient,
 	}
 
 	for _, opt := range opts {
@@ -37,13 +28,6 @@ func NewCurrencyAPI(cfg *Config, opts ...Option) *CurrencyAPI {
 	return api
 }
 
-func (api *CurrencyAPI) SetNext(chain any) error {
-	v, ok := chain.(Chain)
-	if !ok {
-		return errors.New("unable to set next handler. Invalid type")
-	}
-
-	api.next = v
-
-	return nil
+func (api *CurrencyAPI) SetNext(chain currency.IChain) {
+	api.next = chain
 }

@@ -17,5 +17,5 @@ func (e *Service) NewUser(ctx context.Context, u *user.User) error {
 		return user.ErrAlreadyExist
 	}
 
-	return e.userRepo.SaveUser(ctx, u)
+	return e.userRepo.Save(ctx, u)
 }
