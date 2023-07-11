@@ -39,13 +39,8 @@ func createServices() (*Services, error) {
 
 	tds := createThirdPartyServices()
 
-	if err = tds.BinanceAPI.SetNext(tds.CurrencyAPI); err != nil {
-		return nil, err
-	}
-
-	if err = tds.CurrencyAPI.SetNext(tds.CoingeckoAPI); err != nil {
-		return nil, err
-	}
+	tds.BinanceAPI.SetNext(tds.CurrencyAPI)
+	tds.CurrencyAPI.SetNext(tds.CoingeckoAPI)
 
 	currencyService := currency.NewCurrencyService(tds.BinanceAPI)
 
