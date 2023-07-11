@@ -1,21 +1,13 @@
 package http
 
 import (
-	"context"
-
 	"github.com/labstack/echo/v4"
 
-	"currency/internal/domain/rate"
+	"currency/internal/services/currency"
 )
 
-//go:generate mockgen -source=controller.go -destination=mocks/controller.go
-
-type ICurrencyService interface {
-	GetCurrency(ctx context.Context, c *rate.Rate) (*rate.Currency, error)
-}
-
 type Services struct {
-	CurrencyService ICurrencyService
+	CurrencyService currency.ICurrencyService
 }
 
 type exchangeHandler struct {

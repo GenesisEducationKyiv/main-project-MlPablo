@@ -1,31 +1,23 @@
 package coingecko
 
 import (
-	"context"
-	"errors"
 	"net/http"
 
 	"currency/internal/domain/rate"
+	"currency/internal/infrastructure/currency"
 )
-
-//go:generate mockgen -source=coingecko.go -destination=mocks/coingecko.go
-
-type Chain interface {
-	GetCurrency(ctx context.Context, cur *rate.Rate) (float64, error)
-	SetNext(any) error
-}
 
 type CoingeckoAPI struct {
 	cfg    *Config
 	cli    *http.Client
 	mapper map[string]string
-	next   Chain
+	next   currency.IChain
 }
 
 func NewCoingeckoApi(cfg *Config, opts ...Option) *CoingeckoAPI {
 	api := &CoingeckoAPI{
 		cfg:    cfg,
-		cli:    &http.Client{Transport: http.DefaultTransport},
+		cli:    http.DefaultClient,
 		mapper: initMapper(),
 	}
 
@@ -44,13 +36,6 @@ func initMapper() map[string]string {
 	return coins
 }
 
-func (api *CoingeckoAPI) SetNext(chain any) error {
-	v, ok := chain.(Chain)
-	if !ok {
-		return errors.New("unable to set next handler. Invalid type")
-	}
-
-	api.next = v
-
-	return nil
+func (api *CoingeckoAPI) SetNext(chain currency.IChain) {
+	api.next = chain
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"currency/internal/domain/rate"
-	mock_coingecko "currency/internal/infrastructure/currency/coingecko/mocks"
+	mock_currency "currency/internal/infrastructure/currency/mocks"
 )
 
 const invalidURL = "invalidurl.com"
@@ -44,13 +44,12 @@ func TestSetNext(t *testing.T) {
 
 	bctRate := rate.GetBitcoinToUAH()
 
-	mockApi := mock_coingecko.NewMockChain(ctrl)
+	mockApi := mock_currency.NewMockIChain(ctrl)
 	mockApi.EXPECT().
 		GetCurrency(context.Background(), bctRate).
 		Return(mockReturn, nil)
 
-	err := api.SetNext(mockApi)
-	require.NoError(t, err)
+	api.SetNext(mockApi)
 
 	res, err := api.GetCurrency(context.Background(), bctRate)
 	require.NoError(t, err)

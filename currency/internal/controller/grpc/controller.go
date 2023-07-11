@@ -6,15 +6,11 @@ import (
 	"google.golang.org/grpc"
 
 	"currency/api/proto/grpc_currency_service"
-	"currency/internal/domain/rate"
+	"currency/internal/services/currency"
 )
 
-type ICurrencyService interface {
-	GetCurrency(ctx context.Context, c *rate.Rate) (*rate.Currency, error)
-}
-
 type Services struct {
-	CurrencyService ICurrencyService
+	CurrencyService currency.ICurrencyService
 }
 
 type exchangeHandler struct {

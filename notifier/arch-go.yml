@@ -16,7 +16,7 @@ dependenciesRules:
       internal: ["**.domain.**", "**.services.**", "**.api.**"]
   - package: "**.infrastructure.**"
     shouldOnlyDependsOn:
-      internal: ["**.domain.**", "**.api.**"]
+      internal: ["**.domain.**", "**.api.**", "**.infrastructure.**"]
   - package: "**.pkg.**"
     shouldNotDependsOn:
       internal:

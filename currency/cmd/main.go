@@ -2,19 +2,21 @@ package main
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/fx"
 
 	"currency/internal/controller/grpc"
-	"currency/internal/controller/http"
+	_http "currency/internal/controller/http"
 	"currency/internal/infrastructure/currency/binance"
 	"currency/internal/infrastructure/currency/coingecko"
 	"currency/internal/infrastructure/currency/currencyapi"
 	"currency/internal/services/currency"
 	echoserver "currency/pkg/echo"
 	"currency/pkg/grpc/server"
+	"currency/pkg/http/client"
 )
 
 func main() {
@@ -40,22 +42,25 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			NewCoingeckoConfig,
 			NewGrpcConfig,
 			createChan,
-			func(cfg *currencyapi.Config) *currencyapi.CurrencyAPI {
+			func() *http.Client {
+				return client.New(client.WithLogger(logrus.StandardLogger()))
+			},
+			func(cfg *currencyapi.Config, cli *http.Client) *currencyapi.CurrencyAPI {
 				return currencyapi.NewCurrencyAPI(
 					cfg,
-					currencyapi.WithLogger(logrus.StandardLogger()),
+					currencyapi.WithClient(cli),
 				)
 			},
-			func(cfg *binance.Config) *binance.BinanceAPI {
+			func(cfg *binance.Config, cli *http.Client) *binance.BinanceAPI {
 				return binance.NewBinanceApi(
 					cfg,
-					binance.WithLogger(logrus.StandardLogger()),
+					binance.WithClient(cli),
 				)
 			},
-			func(cfg *coingecko.Config) *coingecko.CoingeckoAPI {
+			func(cfg *coingecko.Config, cli *http.Client) *coingecko.CoingeckoAPI {
 				return coingecko.NewCoingeckoApi(
 					cfg,
-					coingecko.WithLogger(logrus.StandardLogger()),
+					coingecko.WithClient(cli),
 				)
 			},
 			fx.Annotate(
@@ -124,20 +129,13 @@ func registerCryptoChain(
 	cu *currencyapi.CurrencyAPI,
 	b *binance.BinanceAPI,
 	co *coingecko.CoingeckoAPI,
-) error {
-	if err := cu.SetNext(b); err != nil {
-		return err
-	}
-
-	if err := b.SetNext(co); err != nil {
-		return err
-	}
-
-	return nil
+) {
+	cu.SetNext(b)
+	b.SetNext(co)
 }
 
-func registerHttpHandlers(srv *http.Services, e *echoserver.Server) {
-	http.RegisterHandlers(e.GetEchoServer(), srv)
+func registerHttpHandlers(srv *_http.Services, e *echoserver.Server) {
+	_http.RegisterHandlers(e.GetEchoServer(), srv)
 }
 
 func registerGRPCHandlers(srv *grpc.Services, s *server.Server) {
@@ -146,8 +144,8 @@ func registerGRPCHandlers(srv *grpc.Services, s *server.Server) {
 
 func NewHTTPServices(
 	c *currency.Service,
-) *http.Services {
-	return &http.Services{
+) *_http.Services {
+	return &_http.Services{
 		CurrencyService: c,
 	}
 }

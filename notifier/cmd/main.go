@@ -49,8 +49,8 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 				currency.New,
 				fx.As(new(event.ICurrencyService)),
 			),
-			fx.Annotate(user.NewUserService, fx.As(new(http.IUserService))),
-			fx.Annotate(event.NewNotificationService, fx.As(new(http.INotificationService))),
+			fx.Annotate(user.NewUserService, fx.As(new(user.IUserService))),
+			fx.Annotate(event.NewNotificationService, fx.As(new(event.INotificationService))),
 			echoserver.New,
 		),
 		fx.Invoke(
@@ -92,8 +92,8 @@ func registerHttpHandlers(srv *http.Services, e *echoserver.Server) {
 }
 
 func NewServices(
-	u http.IUserService,
-	e http.INotificationService,
+	u user.IUserService,
+	e event.INotificationService,
 ) *http.Services {
 	return &http.Services{
 		UserService:         u,
