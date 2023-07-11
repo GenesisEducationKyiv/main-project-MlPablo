@@ -17,7 +17,7 @@ type CoingeckoAPI struct {
 func NewCoingeckoApi(cfg *Config, opts ...Option) *CoingeckoAPI {
 	api := &CoingeckoAPI{
 		cfg:    cfg,
-		cli:    &http.Client{Transport: http.DefaultTransport},
+		cli:    http.DefaultClient,
 		mapper: initMapper(),
 	}
 

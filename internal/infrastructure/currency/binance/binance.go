@@ -15,7 +15,7 @@ type BinanceAPI struct {
 func NewBinanceApi(cfg *Config, opts ...Option) *BinanceAPI {
 	api := &BinanceAPI{
 		cfg: cfg,
-		cli: &http.Client{Transport: http.DefaultTransport},
+		cli: http.DefaultClient,
 	}
 
 	for _, opt := range opts {

@@ -12,7 +12,7 @@ import (
 	"exchange/internal/domain/user"
 )
 
-func (f *Repository) SaveUser(_ context.Context, eu *user.User) error {
+func (f *Repository) Save(_ context.Context, eu *user.User) error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 

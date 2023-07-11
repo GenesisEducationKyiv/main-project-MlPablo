@@ -11,6 +11,7 @@ import (
 	"exchange/internal/services/currency"
 	"exchange/internal/services/event"
 	"exchange/internal/services/user"
+	"exchange/pkg/http/client"
 	"exchange/utils"
 )
 
@@ -56,6 +57,7 @@ func createServices() (*Services, error) {
 }
 
 func createThirdPartyServices() *ThirdPartyServices {
+	client := client.New(client.WithLogger(logrus.StandardLogger()))
 	envGet := utils.TryGetEnv[string]
 
 	mailSender := mail.NewMailService(mail.NewConfig(
@@ -69,19 +71,19 @@ func createThirdPartyServices() *ThirdPartyServices {
 		currencyapi.NewConfig(
 			envGet("CURR_API_KEY"),
 			envGet("CURR_URL"),
-		), currencyapi.WithLogger(logrus.StandardLogger()),
+		), currencyapi.WithClient(client),
 	)
 
 	binanceAPI := binance.NewBinanceApi(
 		binance.NewConfig(
 			envGet("BINANCE_URL"),
-		), binance.WithLogger(logrus.StandardLogger()),
+		), binance.WithClient(client),
 	)
 
 	coingeckoAPI := coingecko.NewCoingeckoApi(
 		coingecko.NewConfig(
 			envGet("COINGECKO_URL"),
-		), coingecko.WithLogger(logrus.StandardLogger()),
+		), coingecko.WithClient(client),
 	)
 
 	return &ThirdPartyServices{

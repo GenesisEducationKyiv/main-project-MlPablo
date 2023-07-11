@@ -18,7 +18,7 @@ type CurrencyAPI struct {
 func NewCurrencyAPI(cfg *Config, opts ...Option) *CurrencyAPI {
 	api := &CurrencyAPI{
 		cfg: cfg,
-		cli: &http.Client{Transport: http.DefaultTransport},
+		cli: http.DefaultClient,
 	}
 
 	for _, opt := range opts {
