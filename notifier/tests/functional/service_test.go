@@ -5,9 +5,8 @@ import (
 
 	"github.com/go-faker/faker/v4"
 
-	"exchange/internal/domain/notification"
-	"exchange/internal/domain/rate"
-	"exchange/internal/domain/user"
+	"notifier/internal/domain/notification"
+	"notifier/internal/domain/user"
 )
 
 func (suite *Suite) TestUserExist() {
@@ -18,15 +17,6 @@ func (suite *Suite) TestUserExist() {
 
 	err = suite.srv.userService.NewUser(context.Background(), u)
 	suite.Require().ErrorIs(err, user.ErrAlreadyExist)
-}
-
-func (suite *Suite) TestGetCurrency() {
-	res, err := suite.srv.currecnyService.GetCurrency(
-		context.Background(),
-		rate.GetBitcoinToUAH(),
-	)
-	suite.Require().NoError(err)
-	suite.NotZero(res)
 }
 
 func (suite *Suite) TestSendEmails() {

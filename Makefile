@@ -5,29 +5,38 @@ GOCLEAN := $(GOCMD) clean
 GOTEST := $(GOCMD) test
 GOGET := $(GOCMD) get
 GOGENERATE := $(GOCMD) generate
-BINARY_NAME := exchange
+BINARY_NAME := main
 BUILD_DIR := build
 E2E_DIR := "./tests/e2e/..."
 FUNCTIONAL_DIR := "./tests/functional/..."
 UNIT_DIR := "./internal/..."
+CURRENCY_SERVICE := "./currency"
+NOTIFIER_SERVICE := "./notifier"
+GATEWAY_SERVICE := "./gateway"
 
 all: test build
 
 build:
 	@echo "Building $(BINARY_NAME)..."
-	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd
+	cd $(NOTIFIER_SERVICE) && $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd
+	cd $(CURRENCY_SERVICE) && $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd
+	cd $(GATEWAY_SERVICE) && $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd
+	# $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd
 
 unit:
 	@echo "Running unit tests..."
-	$(GOTEST) -v $(UNIT_DIR)
+	cd $(NOTIFIER_SERVICE) && $(GOTEST) -v $(UNIT_DIR)
+	cd $(CURRENCY_SERVICE) && $(GOTEST) -v $(UNIT_DIR)
 
 functional:
 	@echo "Running functional tests..."
-	$(GOTEST) -v $(FUNCTIONAL_DIR)
+	cd $(NOTIFIER_SERVICE) && $(GOTEST) -v $(FUNCTIONAL_DIR)
+	cd $(CURRENCY_SERVICE) && $(GOTEST) -v $(FUNCTIONAL_DIR)
 
 e2e:
 	@echo "Running end 2 end tests..."
-	$(GOTEST) -v $(E2E_DIR)
+	cd $(NOTIFIER_SERVICE) && $(GOTEST) -v $(E2E_DIR)
+	cd $(CURRENCY_SERVICE) && $(GOTEST) -v $(E2E_DIR)
 
 test:
 	@echo "Running all tests..."
@@ -35,23 +44,28 @@ test:
 
 generate:
 	@echo "Generating go code..."
-	$(GOGENERATE) ./...
+	cd $(NOTIFIER_SERVICE) && $(GOGENERATE) ./... 
+	cd $(CURRENCY_SERVICE) && $(GOGENERATE) ./... 
 
+# clean:
+# 	@echo "Cleaning..."
+# 	cd $(NOTIFIER_SERVICE) && $(GOCLEAN) rm -f $(BUILD_DIR)/$(BINARY_NAME)
+# 	cd $(CURRENCY_SERVICE) && $(GOCLEAN) rm -f $(BUILD_DIR)/$(BINARY_NAME)
+# 	cd $(GATEWAY_SERVICE) && $(GOCLEAN) rm -f $(BUILD_DIR)/$(BINARY_NAME)
 
-clean:
-	@echo "Cleaning..."
-	$(GOCLEAN)
-	rm -f $(BUILD_DIR)/$(BINARY_NAME)
+# run:
+# 	@echo "Running $(BINARY_NAME)..."
+# 	cd $(CURRENCY_SERVICE) && $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd && \
+# 	$(BUILD_DIR)/$(BINARY_NAME) &
+# 	cd $(NOTIFIER_SERVICE) && $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd && \
+# 	$(BUILD_DIR)/$(BINARY_NAME) &
+# 	cd $(GATEWAY_SERVICE) && $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd && \
+# 	$(BUILD_DIR)/$(BINARY_NAME) &
 
-run:
-	@echo "Running $(BINARY_NAME)..."
-	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd
-	$(BUILD_DIR)/$(BINARY_NAME)
-
-docker:
-	@echo "Running docker..."
-	docker build -t $(BINARY_NAME) .
-	docker run -p 8080:8080 $(BINARY_NAME)
+# docker:
+# 	@echo "Running docker..."
+# 	docker build -t $(BINARY_NAME) .
+# 	docker run -p 8080:8080 $(BINARY_NAME)
 
 lint:
 	@echo "Running linter..."

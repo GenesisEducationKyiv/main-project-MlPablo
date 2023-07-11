@@ -6,7 +6,7 @@ package mock_user
 
 import (
 	context "context"
-	user "os/user"
+	user "notifier/internal/domain/user"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"

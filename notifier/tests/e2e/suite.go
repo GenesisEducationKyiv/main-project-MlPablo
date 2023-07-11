@@ -8,22 +8,19 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 
-	"exchange/internal/controller/http"
-	"exchange/internal/infrastructure/currency/currencyapi"
-	"exchange/internal/infrastructure/mail"
-	"exchange/internal/infrastructure/repository/filesystem"
-	"exchange/internal/services/currency"
-	"exchange/internal/services/event"
-	"exchange/internal/services/user"
-	"exchange/utils"
+	"notifier/internal/controller/http"
+	"notifier/internal/infrastructure/mail"
+	"notifier/internal/infrastructure/repository/filesystem"
+	"notifier/internal/services/event"
+	"notifier/internal/services/user"
+	"notifier/utils"
 )
 
 const testFilePath = "test_path.txt"
 
 type Services struct {
-	currecnyService *currency.Service
-	notifyService   *event.Service
-	userService     *user.Service
+	notifyService *event.Service
+	userService   *user.Service
 }
 
 type Suite struct {
@@ -47,13 +44,6 @@ func (suite *Suite) SetupSuite() {
 		envGet("SMTP_PORT"),
 	))
 
-	currencyAPI := currencyapi.NewCurrencyAPI(
-		currencyapi.NewConfig(
-			envGet("CURR_API_KEY"),
-			envGet("CURR_URL"),
-		),
-	)
-
 	fileRepo, err := filesystem.NewFileSystemRepository(&filesystem.Config{
 		Path: testFilePath,
 	})
@@ -61,25 +51,24 @@ func (suite *Suite) SetupSuite() {
 		logrus.Fatal(err)
 	}
 
-	currecnyService := currency.NewCurrencyService(currencyAPI)
+	stubs := new(thirdParyStubs)
+
 	userService := user.NewUserService(fileRepo)
 	notificationService := event.NewNotificationService(
 		fileRepo,
-		currecnyService,
+		stubs,
 		mailSender,
 	)
 
 	srvs := &Services{
-		currecnyService: currecnyService,
-		userService:     userService,
-		notifyService:   notificationService,
+		userService:   userService,
+		notifyService: notificationService,
 	}
 
 	e := echo.New()
 
 	http.RegisterHandlers(e, &http.Services{
 		UserService:         userService,
-		CurrencyService:     currecnyService,
 		NotificationService: notificationService,
 	})
 

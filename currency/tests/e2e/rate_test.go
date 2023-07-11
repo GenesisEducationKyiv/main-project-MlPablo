@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"exchange/internal/domain/rate"
+	"currency/internal/domain/rate"
 )
 
 func (suite *Suite) TestGetRate() {

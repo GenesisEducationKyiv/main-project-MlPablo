@@ -13,20 +13,21 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 
-	mock_http "notifier/internal/controller/http/mocks"
 	"notifier/internal/domain/notification"
 	"notifier/internal/domain/user"
+	mock_event "notifier/internal/services/event/mocks"
+	mock_user "notifier/internal/services/user/mocks"
 )
 
 type mockServices struct {
-	notificationService *mock_http.MockINotificationService
-	userService         *mock_http.MockIUserService
+	notificationService *mock_event.MockINotificationService
+	userService         *mock_user.MockIUserService
 }
 
 func getMockedServices(ctrl *gomock.Controller) *mockServices {
 	return &mockServices{
-		userService:         mock_http.NewMockIUserService(ctrl),
-		notificationService: mock_http.NewMockINotificationService(ctrl),
+		userService:         mock_user.NewMockIUserService(ctrl),
+		notificationService: mock_event.NewMockINotificationService(ctrl),
 	}
 }
 

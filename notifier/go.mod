@@ -15,10 +15,17 @@ require (
 )
 
 require (
+	github.com/antihax/optional v1.0.0 // indirect
+	golang.org/x/oauth2 v0.7.0 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+)
+
+require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
+	github.com/mailslurp/mailslurp-client-go v0.0.0-20230614101136-8f84f48ff425
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
