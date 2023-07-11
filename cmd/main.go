@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/fx"
 
-	"exchange/internal/controller/http"
+	_http "exchange/internal/controller/http"
 	"exchange/internal/infrastructure/currency/binance"
 	"exchange/internal/infrastructure/currency/coingecko"
 	"exchange/internal/infrastructure/currency/currencyapi"
@@ -17,6 +18,7 @@ import (
 	"exchange/internal/services/event"
 	"exchange/internal/services/user"
 	echoserver "exchange/pkg/echo"
+	"exchange/pkg/http/client"
 )
 
 func main() {
@@ -47,22 +49,25 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 				fx.As(new(user.UserRepository)),
 				fx.As(new(event.UserRepository)),
 			),
-			func(cfg *currencyapi.Config) *currencyapi.CurrencyAPI {
+			func() *http.Client {
+				return client.New(client.WithLogger(logrus.StandardLogger()))
+			},
+			func(cfg *currencyapi.Config, cli *http.Client) *currencyapi.CurrencyAPI {
 				return currencyapi.NewCurrencyAPI(
 					cfg,
-					currencyapi.WithLogger(logrus.StandardLogger()),
+					currencyapi.WithClient(cli),
 				)
 			},
-			func(cfg *binance.Config) *binance.BinanceAPI {
+			func(cfg *binance.Config, cli *http.Client) *binance.BinanceAPI {
 				return binance.NewBinanceApi(
 					cfg,
-					binance.WithLogger(logrus.StandardLogger()),
+					binance.WithClient(cli),
 				)
 			},
-			func(cfg *coingecko.Config) *coingecko.CoingeckoAPI {
+			func(cfg *coingecko.Config, cli *http.Client) *coingecko.CoingeckoAPI {
 				return coingecko.NewCoingeckoApi(
 					cfg,
-					coingecko.WithLogger(logrus.StandardLogger()),
+					coingecko.WithClient(cli),
 				)
 			},
 			fx.Annotate(
@@ -75,10 +80,10 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			fx.Annotate(
 				currency.NewCurrencyService,
 				fx.As(new(event.ICurrencyService)),
-				fx.As(new(http.ICurrencyService)),
+				fx.As(new(_http.ICurrencyService)),
 			),
-			fx.Annotate(user.NewUserService, fx.As(new(http.IUserService))),
-			fx.Annotate(event.NewNotificationService, fx.As(new(http.INotificationService))),
+			fx.Annotate(user.NewUserService, fx.As(new(_http.IUserService))),
+			fx.Annotate(event.NewNotificationService, fx.As(new(_http.INotificationService))),
 			echoserver.New,
 		),
 		fx.Invoke(
@@ -120,28 +125,21 @@ func registerCryptoChain(
 	cu *currencyapi.CurrencyAPI,
 	b *binance.BinanceAPI,
 	co *coingecko.CoingeckoAPI,
-) error {
-	if err := cu.SetNext(b); err != nil {
-		return err
-	}
-
-	if err := b.SetNext(co); err != nil {
-		return err
-	}
-
-	return nil
+) {
+	cu.SetNext(b)
+	b.SetNext(co)
 }
 
-func registerHttpHandlers(srv *http.Services, e *echoserver.Server) {
-	http.RegisterHandlers(e.GetEchoServer(), srv)
+func registerHttpHandlers(srv *_http.Services, e *echoserver.Server) {
+	_http.RegisterHandlers(e.GetEchoServer(), srv)
 }
 
 func NewServices(
-	c http.ICurrencyService,
-	u http.IUserService,
-	e http.INotificationService,
-) *http.Services {
-	return &http.Services{
+	c _http.ICurrencyService,
+	u _http.IUserService,
+	e _http.INotificationService,
+) *_http.Services {
+	return &_http.Services{
 		CurrencyService:     c,
 		UserService:         u,
 		NotificationService: e,
