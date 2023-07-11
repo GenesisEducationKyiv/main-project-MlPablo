@@ -19,7 +19,7 @@ func NewMemoryRepository() *Repository {
 	}
 }
 
-func (m *Repository) SaveUser(_ context.Context, eu *user.User) error {
+func (m *Repository) Save(_ context.Context, eu *user.User) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 

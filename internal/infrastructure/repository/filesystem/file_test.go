@@ -28,7 +28,7 @@ func TestFileSaveUserEmail(t *testing.T) {
 
 	testEmail := faker.Email()
 
-	err = repo.SaveUser(ctx, user.NewUser(testEmail))
+	err = repo.Save(ctx, user.NewUser(testEmail))
 	require.NoError(t, err)
 
 	fileContent, err := os.ReadFile(testFilePath)
@@ -50,7 +50,7 @@ func TestEmailExist(t *testing.T) {
 
 	for i := 0; i < batch; i++ {
 		mail := faker.Email()
-		err = repo.SaveUser(ctx, user.NewUser(mail))
+		err = repo.Save(ctx, user.NewUser(mail))
 		require.NoError(t, err)
 
 		exist, err = repo.EmailExist(ctx, mail)
@@ -76,7 +76,7 @@ func TestGetAll(t *testing.T) {
 
 	for i := 0; i < batch; i++ {
 		mail := faker.Email()
-		err = repo.SaveUser(ctx, user.NewUser(mail))
+		err = repo.Save(ctx, user.NewUser(mail))
 		require.NoError(t, err)
 
 		emails[i] = mail
@@ -106,7 +106,7 @@ func TestConcurrentWrite(t *testing.T) {
 		go func() {
 			defer wg.Done()
 
-			err = repo.SaveUser(ctx, user.NewUser("123"))
+			err = repo.Save(ctx, user.NewUser("123"))
 			require.NoError(t, err)
 		}()
 	}
