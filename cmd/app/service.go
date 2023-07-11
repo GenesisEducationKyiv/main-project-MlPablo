@@ -1,12 +1,17 @@
 package app
 
 import (
+	"github.com/sirupsen/logrus"
+
+	"exchange/internal/infrastructure/currency/binance"
+	"exchange/internal/infrastructure/currency/coingecko"
 	"exchange/internal/infrastructure/currency/currencyapi"
 	"exchange/internal/infrastructure/mail"
 	"exchange/internal/infrastructure/repository/filesystem"
 	"exchange/internal/services/currency"
 	"exchange/internal/services/event"
 	"exchange/internal/services/user"
+	"exchange/pkg/http/client"
 	"exchange/utils"
 )
 
@@ -17,8 +22,10 @@ type Services struct {
 }
 
 type ThirdPartyServices struct {
-	MailSender  *mail.EmailSender
-	CurrencyAPI *currencyapi.CurrencyAPI
+	MailSender   *mail.EmailSender
+	CurrencyAPI  *currencyapi.CurrencyAPI
+	BinanceAPI   *binance.BinanceAPI
+	CoingeckoAPI *coingecko.CoingeckoAPI
 }
 
 type Repositories struct {
@@ -33,18 +40,24 @@ func createServices() (*Services, error) {
 
 	tds := createThirdPartyServices()
 
+	tds.BinanceAPI.SetNext(tds.CurrencyAPI)
+	tds.CurrencyAPI.SetNext(tds.CoingeckoAPI)
+
+	currencyService := currency.NewCurrencyService(tds.BinanceAPI)
+
 	return &Services{
 		UserService: user.NewUserService(repo.fileRepo),
 		NotificationService: event.NewNotificationService(
 			repo.fileRepo,
-			tds.CurrencyAPI,
+			currencyService,
 			tds.MailSender,
 		),
-		CurrencyService: currency.NewCurrencyService(tds.CurrencyAPI),
+		CurrencyService: currencyService,
 	}, nil
 }
 
 func createThirdPartyServices() *ThirdPartyServices {
+	client := client.New(client.WithLogger(logrus.StandardLogger()))
 	envGet := utils.TryGetEnv[string]
 
 	mailSender := mail.NewMailService(mail.NewConfig(
@@ -58,12 +71,26 @@ func createThirdPartyServices() *ThirdPartyServices {
 		currencyapi.NewConfig(
 			envGet("CURR_API_KEY"),
 			envGet("CURR_URL"),
-		),
+		), currencyapi.WithClient(client),
+	)
+
+	binanceAPI := binance.NewBinanceApi(
+		binance.NewConfig(
+			envGet("BINANCE_URL"),
+		), binance.WithClient(client),
+	)
+
+	coingeckoAPI := coingecko.NewCoingeckoApi(
+		coingecko.NewConfig(
+			envGet("COINGECKO_URL"),
+		), coingecko.WithClient(client),
 	)
 
 	return &ThirdPartyServices{
-		MailSender:  mailSender,
-		CurrencyAPI: currencyAPI,
+		MailSender:   mailSender,
+		CurrencyAPI:  currencyAPI,
+		BinanceAPI:   binanceAPI,
+		CoingeckoAPI: coingeckoAPI,
 	}
 }
 

@@ -3,7 +3,7 @@ package http
 import (
 	"context"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 
 	"exchange/internal/domain/notification"
 	"exchange/internal/domain/rate"

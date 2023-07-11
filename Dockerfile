@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN go get ./... && go mod download
-RUN GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-w -s" -o exchange ./cmd/web/main.go
+RUN GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-w -s" -o exchange ./cmd/main.go
 
 FROM alpine:latest 
 

@@ -50,16 +50,16 @@ func (mr *MockUserRepositoryMockRecorder) EmailExist(ctx, email interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmailExist", reflect.TypeOf((*MockUserRepository)(nil).EmailExist), ctx, email)
 }
 
-// SaveUser mocks base method.
-func (m *MockUserRepository) SaveUser(ctx context.Context, user *user.User) error {
+// Save mocks base method.
+func (m *MockUserRepository) Save(ctx context.Context, user *user.User) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SaveUser", ctx, user)
+	ret := m.ctrl.Call(m, "Save", ctx, user)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// SaveUser indicates an expected call of SaveUser.
-func (mr *MockUserRepositoryMockRecorder) SaveUser(ctx, user interface{}) *gomock.Call {
+// Save indicates an expected call of Save.
+func (mr *MockUserRepositoryMockRecorder) Save(ctx, user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveUser", reflect.TypeOf((*MockUserRepository)(nil).SaveUser), ctx, user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockUserRepository)(nil).Save), ctx, user)
 }
