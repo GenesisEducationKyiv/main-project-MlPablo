@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -13,6 +14,7 @@ import (
 	"currency/internal/infrastructure/currency/binance"
 	"currency/internal/infrastructure/currency/coingecko"
 	"currency/internal/infrastructure/currency/currencyapi"
+	"currency/internal/infrastructure/events/kafka"
 	"currency/internal/services/currency"
 	echoserver "currency/pkg/echo"
 	"currency/pkg/grpc/server"
@@ -69,6 +71,7 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 				},
 				fx.As(new(currency.ICurrencyAPI)),
 			),
+			kafka.CreateKafka,
 			currency.NewCurrencyService,
 			server.NewServer,
 			echoserver.New,
@@ -80,12 +83,22 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			registerGRPCHandlers,
 			startHTTPServer,
 			startGRPCServer,
+			makeRequest,
 		),
 	)
 }
 
 func createChan() chan error {
 	return make(chan error)
+}
+
+func makeRequest(k *kafka.Kafka) {
+	go func(k *kafka.Kafka) {
+		for {
+			time.Sleep(time.Second * 4)
+			logrus.Info("kafka send error:", k.Publish())
+		}
+	}(k)
 }
 
 func startHTTPServer(srv *echoserver.Server, ls fx.Lifecycle, errChan chan error) {
