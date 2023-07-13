@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
+
 	"currency/internal/infrastructure/currency/binance"
 	"currency/internal/infrastructure/currency/coingecko"
 	"currency/internal/infrastructure/currency/currencyapi"
+	"currency/internal/infrastructure/events/kafka"
 	echoserver "currency/pkg/echo"
 	"currency/pkg/grpc/server"
 	"currency/utils"
@@ -32,6 +35,16 @@ func NewCoingeckoConfig() *coingecko.Config {
 
 func NewBinanceConfig() *binance.Config {
 	return binance.NewConfig(envGet("BINANCE_URL"))
+}
+
+func NewKafkaConfig() *kafka.Config {
+	return &kafka.Config{
+		Address: fmt.Sprintf(
+			"%s:%s",
+			utils.TryGetEnvDefault("KAFKA_HOST", "localhost"),
+			utils.TryGetEnvDefault("KAFKA_PORT", "9092"),
+		),
+	}
 }
 
 func NewGrpcConfig() *server.Config {

@@ -46,7 +46,7 @@ func (suite *Suite) SetupSuite() {
 
 	http.RegisterHandlers(e, &http.Services{
 		CurrencyService: currecnyService,
-	})
+	}, new(eventer))
 
 	suite.srv = srvs
 	suite.e = e

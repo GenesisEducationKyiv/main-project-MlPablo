@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -43,6 +42,7 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			NewCurrencyapiConfig,
 			NewCoingeckoConfig,
 			NewGrpcConfig,
+			NewKafkaConfig,
 			createChan,
 			func() *http.Client {
 				return client.New(client.WithLogger(logrus.StandardLogger()))
@@ -71,6 +71,7 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 				},
 				fx.As(new(currency.ICurrencyAPI)),
 			),
+			// fx.Annotate(kafka.CreateKafka, fx.As(new(_http.Eventer))),
 			kafka.CreateKafka,
 			currency.NewCurrencyService,
 			server.NewServer,
@@ -83,22 +84,12 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			registerGRPCHandlers,
 			startHTTPServer,
 			startGRPCServer,
-			makeRequest,
 		),
 	)
 }
 
 func createChan() chan error {
 	return make(chan error)
-}
-
-func makeRequest(k *kafka.Kafka) {
-	go func(k *kafka.Kafka) {
-		for {
-			time.Sleep(time.Second * 4)
-			logrus.Info("kafka send error:", k.Publish())
-		}
-	}(k)
 }
 
 func startHTTPServer(srv *echoserver.Server, ls fx.Lifecycle, errChan chan error) {
@@ -147,8 +138,8 @@ func registerCryptoChain(
 	b.SetNext(co)
 }
 
-func registerHttpHandlers(srv *_http.Services, e *echoserver.Server) {
-	_http.RegisterHandlers(e.GetEchoServer(), srv)
+func registerHttpHandlers(srv *_http.Services, e *echoserver.Server, k *kafka.Kafka) {
+	_http.RegisterHandlers(e.GetEchoServer(), srv, k)
 }
 
 func registerGRPCHandlers(srv *grpc.Services, s *server.Server) {
