@@ -10,7 +10,7 @@ services:
     depends_on:
       - kafka
     networks:
-      - exchange
+      - backend
   notifier:
     container_name: notifier
     build:
@@ -21,7 +21,7 @@ services:
       - kafka
     restart: unless-stopped
     networks:
-      - exchange
+      - backend
   gateway:
     container_name: gateway
     build:
@@ -34,7 +34,7 @@ services:
       - currency
     restart: unless-stopped
     networks:
-      - exchange
+      - backend
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -44,7 +44,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - exchange
+      - backend
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -58,8 +58,9 @@ services:
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_CREATE_TOPICS=logs:1:1
     networks:
-      - exchange
+      - backend
 networks:
-  exchange:
-    driver: bridge
+  backend:
+    external: true
 
+# // 3306, 8092

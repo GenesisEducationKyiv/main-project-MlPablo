@@ -35,6 +35,20 @@ func (m *MockIUserService) EXPECT() *MockIUserServiceMockRecorder {
 	return m.recorder
 }
 
+// DeleteUser mocks base method.
+func (m *MockIUserService) DeleteUser(ctx context.Context, eu *user.User) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteUser", ctx, eu)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteUser indicates an expected call of DeleteUser.
+func (mr *MockIUserServiceMockRecorder) DeleteUser(ctx, eu interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUser", reflect.TypeOf((*MockIUserService)(nil).DeleteUser), ctx, eu)
+}
+
 // NewUser mocks base method.
 func (m *MockIUserService) NewUser(ctx context.Context, eu *user.User) error {
 	m.ctrl.T.Helper()
@@ -47,4 +61,19 @@ func (m *MockIUserService) NewUser(ctx context.Context, eu *user.User) error {
 func (mr *MockIUserServiceMockRecorder) NewUser(ctx, eu interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewUser", reflect.TypeOf((*MockIUserService)(nil).NewUser), ctx, eu)
+}
+
+// UserExist mocks base method.
+func (m *MockIUserService) UserExist(ctx context.Context, eu *user.User) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UserExist", ctx, eu)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UserExist indicates an expected call of UserExist.
+func (mr *MockIUserServiceMockRecorder) UserExist(ctx, eu interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserExist", reflect.TypeOf((*MockIUserService)(nil).UserExist), ctx, eu)
 }

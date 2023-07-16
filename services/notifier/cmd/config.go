@@ -1,6 +1,7 @@
 package main
 
 import (
+	"notifier/internal/controller/http"
 	"notifier/internal/infrastructure/mail"
 	"notifier/internal/infrastructure/repository/filesystem"
 	echoserver "notifier/pkg/echo"
@@ -23,6 +24,14 @@ func NewMailConfig() *mail.Config {
 		envGet("SMTP_HOST"),
 		envGet("SMTP_PORT"),
 	)
+}
+
+func NewHTTPControllerConfig() *http.Config {
+	return &http.Config{
+		DtmCoordinatoURL:  envGet("DTM_COORDINATOR"),
+		CustomerServerURL: envGet("CUSTOMERS_SERVICE_URL"),
+		NotifierServerURL: envGet("NOTIFIER_SERVICE_URL"),
+	}
 }
 
 func NewFileSystemConfig() *filesystem.Config {

@@ -2,6 +2,7 @@ package filesystem
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -12,7 +13,7 @@ import (
 	"notifier/internal/domain/user"
 )
 
-func (f *Repository) SaveUser(_ context.Context, eu *user.User) error {
+func (f *Repository) Save(_ context.Context, eu *user.User) error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 
@@ -88,6 +89,35 @@ func (f *Repository) EmailExist(_ context.Context, email string) (bool, error) {
 			return true, nil
 		}
 	}
+}
+
+func (f *Repository) Delete(_ context.Context, email string) error {
+	f.fm.Lock()
+	defer f.fm.Unlock()
+
+	file, err := os.Open(f.cfg.Path)
+	if err != nil {
+		return err
+	}
+
+	scann := bufio.NewScanner(file)
+	buffer := bytes.NewBufferString("")
+
+	for scann.Scan() {
+		if scann.Text() == email {
+			continue
+		}
+
+		if _, err = buffer.WriteString(addEndOfTheLine(scann.Text())); err != nil {
+			return err
+		}
+	}
+
+	if err = scann.Err(); err != nil {
+		return err
+	}
+
+	return os.WriteFile(f.cfg.Path, buffer.Bytes(), 0600)
 }
 
 func addEndOfTheLine(data string) string {

@@ -37,6 +37,7 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			NewMailConfig,
 			NewFileSystemConfig,
 			NewCurrencyGrpcConfig,
+			NewHTTPControllerConfig,
 			createChan,
 			client.NewConnection,
 			fx.Annotate(
@@ -87,8 +88,8 @@ func startErrorHandling(shutdowner fx.Shutdowner, errChan chan error) {
 	}(errChan)
 }
 
-func registerHttpHandlers(srv *http.Services, e *echoserver.Server) {
-	http.RegisterHandlers(e.GetEchoServer(), srv)
+func registerHttpHandlers(srv *http.Services, e *echoserver.Server, c *http.Config) {
+	http.RegisterHandlers(e.GetEchoServer(), srv, c)
 }
 
 func NewServices(
