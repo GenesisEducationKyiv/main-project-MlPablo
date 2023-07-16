@@ -14,15 +14,20 @@ type Services struct {
 
 type exchangeHandler struct {
 	services *Services
+	c        *Config
 }
 
-func RegisterHandlers(e *echo.Echo, services *Services) {
+func RegisterHandlers(e *echo.Echo, services *Services, c *Config) {
 	handler := &exchangeHandler{
 		services: services,
+		c:        c,
 	}
 
 	group := e.Group("/api")
 
-	group.POST("/subscribe", handler.CreateMailSubscriber)
+	group.POST("/subscribe", handler.CreateMailSubscriberSaga)
+	group.POST("/add_email", handler.CreateMailSubscriber)
+	group.POST("/add_email_compensate", handler.CreateMailCompensate)
+	// dtmutil.DefaultHTTPServer
 	group.POST("/sendEmails", handler.SendEmails)
 }

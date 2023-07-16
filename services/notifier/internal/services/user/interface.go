@@ -10,4 +10,6 @@ import (
 
 type IUserService interface {
 	NewUser(ctx context.Context, eu *user.User) error
+	DeleteUser(ctx context.Context, eu *user.User) error
+	UserExist(ctx context.Context, eu *user.User) (bool, error)
 }

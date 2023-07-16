@@ -9,8 +9,9 @@ import (
 //go:generate mockgen -source=service.go -destination=mocks/user.go
 
 type UserRepository interface {
-	SaveUser(ctx context.Context, user *user.User) error
+	Save(ctx context.Context, user *user.User) error
 	EmailExist(ctx context.Context, email string) (bool, error)
+	Delete(ctx context.Context, emain string) error
 }
 
 type Service struct {

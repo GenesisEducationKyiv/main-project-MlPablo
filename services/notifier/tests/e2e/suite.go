@@ -70,7 +70,7 @@ func (suite *Suite) SetupSuite() {
 	http.RegisterHandlers(e, &http.Services{
 		UserService:         userService,
 		NotificationService: notificationService,
-	})
+	}, nil)
 
 	suite.srv = srvs
 	suite.repo = fileRepo

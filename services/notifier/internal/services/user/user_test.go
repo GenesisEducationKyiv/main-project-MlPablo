@@ -23,7 +23,7 @@ func TestCreateUser(t *testing.T) {
 	gomock.InOrder(
 		userRepoMock.EXPECT().EmailExist(context.Background(), email).Return(false, nil),
 		userRepoMock.EXPECT().
-			SaveUser(context.Background(), user_domain.NewUser(email)).
+			Save(context.Background(), user_domain.NewUser(email)).
 			Return(nil),
 	)
 
