@@ -16,9 +16,9 @@ jobs:
           go-version: '1.20'
       - name: Build
         run: |
-          go build -v ./currency/...
-          go build -v ./notifier/...
-          go build -v ./gateway/...
+          go build -v ./services/currency/...
+          go build -v ./services/notifier/...
+          go build -v ./services/gateway/...
       #
       - name: Test
         run: go test -v $(go list -f '{{.Dir}}/...' -m | xargs)
@@ -37,15 +37,16 @@ jobs:
             notifier/...
           fail_on_error: true
           cache: true
+          workdir: ./services
           reporter: github-check
 
       - name: Install go arch
         run: go install -v github.com/fdaines/arch-go@latest
 
       - name: Run currency arch test
-        working-directory: ./currency
+        working-directory: ./services/currency
         run: arch-go -v
 
       - name: Run notifier arch test
-        working-directory: ./notifier
+        working-directory: ./services/notifier
         run: arch-go -v

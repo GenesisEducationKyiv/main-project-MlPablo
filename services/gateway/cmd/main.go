@@ -42,10 +42,10 @@ func main() {
 }
 
 func loadProxy() *Proxy {
-	hp := net.JoinHostPort(os.Getenv("CURRENCY_ADDRESS"), os.Getenv("CURRENCY_PORT"))
-	hp1 := net.JoinHostPort(os.Getenv("NOTIFIER_ADDRESS"), os.Getenv("NOTIFIER_PORT"))
-	currencyURL, _ := url.Parse(fmt.Sprintf("http://%s", hp))
-	notifierURL, _ := url.Parse(fmt.Sprintf("http://%s", hp1))
+	currencyAddress := net.JoinHostPort(os.Getenv("CURRENCY_ADDRESS"), os.Getenv("CURRENCY_PORT"))
+	notiferAddress := net.JoinHostPort(os.Getenv("NOTIFIER_ADDRESS"), os.Getenv("NOTIFIER_PORT"))
+	currencyURL, _ := url.Parse(fmt.Sprintf("http://%s", currencyAddress))
+	notifierURL, _ := url.Parse(fmt.Sprintf("http://%s", notiferAddress))
 
 	return &Proxy{
 		currency: httputil.NewSingleHostReverseProxy(currencyURL),
@@ -58,18 +58,18 @@ func registerNotifierHandlers(p *Proxy) {
 		p.notifier.ServeHTTP(w, r)
 	})
 
-	http.Handle("/api/subscribe", exampleMiddleware(handler))
-	http.Handle("/api/sendEmails", exampleMiddleware(handler))
+	http.Handle("/api/subscribe", logHttp(handler))
+	http.Handle("/api/sendEmails", logHttp(handler))
 }
 
 func registerCurrencyHandlers(p *Proxy) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		p.currency.ServeHTTP(w, r)
 	})
-	http.Handle("/api/rate", exampleMiddleware(handler))
+	http.Handle("/api/rate", logHttp(handler))
 }
 
-func exampleMiddleware(next http.Handler) http.Handler {
+func logHttp(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		l := logrus.WithFields(logrus.Fields{
 			"Method": r.Method,

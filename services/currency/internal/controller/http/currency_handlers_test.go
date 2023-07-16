@@ -15,17 +15,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	mock_http "currency/internal/controller/http/mocks"
 	"currency/internal/domain/rate"
+	mock_currency "currency/internal/services/currency/mocks"
 )
 
 type mockServices struct {
-	currencyService *mock_http.MockICurrencyService
+	currencyService *mock_currency.MockICurrencyService
 }
 
 func getMockedServices(ctrl *gomock.Controller) *mockServices {
 	return &mockServices{
-		currencyService: mock_http.NewMockICurrencyService(ctrl),
+		currencyService: mock_currency.NewMockICurrencyService(ctrl),
 	}
 }
 

@@ -10,9 +10,9 @@ BUILD_DIR := build
 E2E_DIR := "./tests/e2e/..."
 FUNCTIONAL_DIR := "./tests/functional/..."
 UNIT_DIR := "./internal/..."
-CURRENCY_SERVICE := "./currency"
-NOTIFIER_SERVICE := "./notifier"
-GATEWAY_SERVICE := "./gateway"
+CURRENCY_SERVICE := "./services/currency"
+NOTIFIER_SERVICE := "./services/notifier"
+GATEWAY_SERVICE := "./services/gateway"
 
 all: test build
 

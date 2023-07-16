@@ -1,7 +1,7 @@
 go 1.20
 
 use (
-	./currency
-	./gateway
-	./notifier
+	./services/currency
+	./services/gateway
+	./services/notifier
 )
