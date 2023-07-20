@@ -62,7 +62,7 @@ jobs:
           workdir: ./services
           reporter: github-check
 
-  install-arch:
+  arch-test:
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -76,32 +76,11 @@ jobs:
       - name: Install go arch
         run: go install -v github.com/fdaines/arch-go@latest
 
-  run-currency-arch-test:
-    runs-on: ubuntu-latest
-    needs: install-arch
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.20'
-
       - name: Run currency arch test
         working-directory: ./services/currency
         run: arch-go -v
 
-  run-notifier-arch-test:
-    runs-on: ubuntu-latest
-    needs: install-arch
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.20'
-
       - name: Run notifier arch test
         working-directory: ./services/notifier
         run: arch-go -v
+
