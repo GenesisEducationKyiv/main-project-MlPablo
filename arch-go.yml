@@ -1,0 +1,79 @@
+version: 1
+threshold:
+  compliance: 100
+  coverage: 90
+dependenciesRules:
+  - package: "**.domain.*"
+    shouldOnlyDependsOn:
+      internal:
+        - "**.domain.**"
+  - package: "**.services.**"
+    shouldOnlyDependsOn:
+      internal:
+        - "**.domain.**"
+  - package: "**.controller.**"
+    shouldOnlyDependsOn:
+      internal: ["**.domain.**", "**.services.**"]
+  - package: "**.infrastructure.**"
+    shouldOnlyDependsOn:
+      internal: ["**.domain.**", "**.infrastructure.**"]
+  - package: "**.pkg.**"
+    shouldNotDependsOn:
+      internal:
+        - "**.domain.**"
+  - package: "tests.**"
+    shouldOnlyDependsOn:
+      internal:
+        - "internal.**"
+        - "utils"
+  - package: "cmd.**"
+    shouldOnlyDependsOn:
+      internal:
+        - "internal.**"
+        - "utils"
+        - "pkg.**"
+  - package: "utils"
+    shouldNotDependsOn:
+      internal:
+        - "internal.**"
+    # shouldNotDependsOn: 
+    #   internal: ["**.domain.**"]
+  # - package: "**.utils.**"
+  #   shouldOnlyDependsOn:
+  #     - "**.model.**"
+  # - package: "**.foobar.**"
+  #   shouldOnlyDependsOn:
+  #     external:
+  #       - "gopkg.in/yaml.v2"
+  # - package: "**.example.**"
+  #   shouldNotDependsOn:
+  #     external:
+  #       - "github.com/foobar/example-module"
+
+contentsRules:
+  # - package: "**.impl.model"
+  #   shouldNotContainInterfaces: true
+  # - package: "**.impl.config"
+  #   shouldOnlyContainFunctions: true
+  # - package: "**.impl.dependencies"
+  #   shouldNotContainStructs: true
+  #   shouldNotContainInterfaces: true
+  #   shouldNotContainMethods: true
+  #   shouldNotContainFunctions: true
+
+functionsRules:
+  # - package: "**.impl.**"
+  #   maxParameters: 3
+  #   maxReturnValues: 2
+  #   maxPublicFunctionPerFile: 1
+  #   maxLines: 50
+
+cyclesRules:
+  # - package: "**.cmd"
+  #   shouldNotContainCycles: true
+
+namingRules:
+  # - package: "**.arch-go.**"
+  #   interfaceImplementationNamingRule:
+  #     structsThatImplement: "*Connection"
+  #     shouldHaveSimpleNameEndingWith: "Connection"
