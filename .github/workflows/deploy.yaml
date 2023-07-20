@@ -1,8 +1,8 @@
 name: Go package
 on:
-    push:
-        branches:
-            - '**'
+  push:
+    branches:
+      - '**'
       
 jobs:
   build:
@@ -14,19 +14,41 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.20'
+
       - name: Build
         run: |
           go build -v ./services/currency/...
           go build -v ./services/notifier/...
           go build -v ./services/gateway/...
-      #
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
       - name: Test
         run: go test -v $(go list -f '{{.Dir}}/...' -m | xargs)
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
 
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
-          # optionally use a specific version of Go rather than the latest one
           go_version: "1.20"
           filter_mode: nofilter
           golangci_lint_flags: >
@@ -40,12 +62,45 @@ jobs:
           workdir: ./services
           reporter: github-check
 
+  install-arch:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
       - name: Install go arch
         run: go install -v github.com/fdaines/arch-go@latest
+
+  run-currency-arch-test:
+    runs-on: ubuntu-latest
+    needs: install-arch
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
 
       - name: Run currency arch test
         working-directory: ./services/currency
         run: arch-go -v
+
+  run-notifier-arch-test:
+    runs-on: ubuntu-latest
+    needs: install-arch
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
 
       - name: Run notifier arch test
         working-directory: ./services/notifier
