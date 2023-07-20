@@ -2,6 +2,7 @@ package currencyapi
 
 import (
 	"context"
+	"errors"
 	"os"
 	"testing"
 
@@ -28,9 +29,14 @@ func getApi(t *testing.T) *CurrencyAPI {
 	return NewCurrencyAPI(NewConfig(key, url))
 }
 
-func TestCoingecko(t *testing.T) {
+func TestCurrencyapi(t *testing.T) {
 	api := getApi(t)
 	res, err := api.GetCurrency(context.Background(), rate.GetBitcoinToUAH())
+
+	if errors.Is(err, rate.ErrThirdPartyRequest) {
+		t.Skip()
+	}
+
 	require.NoError(t, err)
 	require.NotZero(t, res)
 }

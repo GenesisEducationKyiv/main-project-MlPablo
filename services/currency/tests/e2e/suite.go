@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"currency/internal/controller/http"
-	"currency/internal/infrastructure/currency/currencyapi"
+	"currency/internal/infrastructure/currency/binance"
 	"currency/internal/services/currency"
 	"currency/utils"
 )
@@ -29,14 +29,9 @@ func (suite *Suite) SetupSuite() {
 
 	envGet := utils.TryGetEnv[string]
 
-	currencyAPI := currencyapi.NewCurrencyAPI(
-		currencyapi.NewConfig(
-			envGet("CURR_API_KEY"),
-			envGet("CURR_URL"),
-		),
-	)
+	binanceAPI := binance.NewBinanceApi(binance.NewConfig(envGet("BINANCE_URL")))
 
-	currecnyService := currency.NewCurrencyService(currencyAPI)
+	currecnyService := currency.NewCurrencyService(binanceAPI)
 
 	srvs := &Services{
 		currecnyService: currecnyService,
