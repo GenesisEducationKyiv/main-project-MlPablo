@@ -14,6 +14,16 @@ type Rate struct {
 	QuoteCurrency string `json:"quote_currency"`
 }
 
+type Currency struct {
+	Value float64 `json:"value"`
+}
+
+func NewCurrency(value float64) *Currency {
+	return &Currency{
+		Value: value,
+	}
+}
+
 func GetBitcoinToUAH() *Rate {
 	return &Rate{
 		BaseCurrency:  BTC,

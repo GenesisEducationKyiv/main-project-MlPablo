@@ -21,5 +21,5 @@ func (n *Service) Notify(ctx context.Context, _ *notification.Notification) erro
 		return err
 	}
 
-	return n.mailService.SendEmail(ctx, currency, emails...)
+	return n.mailService.SendEmail(ctx, currency.Value, emails...)
 }

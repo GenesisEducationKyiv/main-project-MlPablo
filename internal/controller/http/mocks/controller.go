@@ -75,10 +75,10 @@ func (m *MockICurrencyService) EXPECT() *MockICurrencyServiceMockRecorder {
 }
 
 // GetCurrency mocks base method.
-func (m *MockICurrencyService) GetCurrency(ctx context.Context, c *rate.Rate) (float64, error) {
+func (m *MockICurrencyService) GetCurrency(ctx context.Context, c *rate.Rate) (*rate.Currency, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrency", ctx, c)
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(*rate.Currency)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

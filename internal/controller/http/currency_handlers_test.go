@@ -77,7 +77,7 @@ func TestGetCurrency(t *testing.T) {
 
 			mockedServices.currencyService.EXPECT().
 				GetCurrency(context.Background(), rate.GetBitcoinToUAH()).
-				Return(test.expectedRate, test.expectedErrFromCurrency)
+				Return(rate.NewCurrency(test.expectedRate), test.expectedErrFromCurrency)
 
 			e := echo.New()
 
@@ -96,11 +96,11 @@ func TestGetCurrency(t *testing.T) {
 			respBody, err := io.ReadAll(rec.Body)
 			require.NoError(t, err)
 
-			var gotResponse float64
+			var gotResponse rate.Currency
 
 			err = json.Unmarshal(respBody, &gotResponse)
 			require.NoError(t, err)
-			assert.Equal(t, test.expectedRate, gotResponse)
+			assert.Equal(t, test.expectedRate, gotResponse.Value)
 		})
 	}
 }

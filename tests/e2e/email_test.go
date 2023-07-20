@@ -35,8 +35,10 @@ func (suite *Suite) TestSendEmail() {
 
 	suite.Require().NotNil(email.Body)
 
+	// var resp rate.Currency
+	// err = json.Unmarshal([]byte(strings.TrimSpace(*email.Body)), &resp)
 	btcPrice, err := strconv.ParseFloat(strings.TrimSpace(*email.Body), 64)
-	suite.Require().NoError(err)
+	suite.Require().NoError(err, *email.Body)
 	suite.NotZero(btcPrice)
 }
 

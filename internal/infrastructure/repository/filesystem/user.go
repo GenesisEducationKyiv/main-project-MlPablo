@@ -16,7 +16,7 @@ func (f *Repository) Save(_ context.Context, eu *user.User) error {
 	f.fm.Lock()
 	defer f.fm.Unlock()
 
-	file, err := os.OpenFile(f.filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile(f.cfg.Path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		return fmt.Errorf("failed to open data file: %w", err)
 	}
@@ -35,13 +35,13 @@ func (f *Repository) GetAllEmails(
 	f.fm.RLock()
 	defer f.fm.RUnlock()
 
-	data, err := os.ReadFile(f.filePath)
+	data, err := os.ReadFile(f.cfg.Path)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return []string{}, nil
 		}
 
-		return nil, fmt.Errorf("failed to read file by path: %s", f.filePath)
+		return nil, fmt.Errorf("failed to read file by path: %s", f.cfg.Path)
 	}
 
 	rows := strings.Split(string(data), "\n")
@@ -63,7 +63,7 @@ func (f *Repository) EmailExist(_ context.Context, email string) (bool, error) {
 	f.fm.RLock()
 	defer f.fm.RUnlock()
 
-	file, err := os.Open(f.filePath)
+	file, err := os.Open(f.cfg.Path)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
