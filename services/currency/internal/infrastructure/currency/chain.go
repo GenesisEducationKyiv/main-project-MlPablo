@@ -13,7 +13,6 @@ type ICryptoProvider interface {
 }
 
 type IChain interface {
-	// currency.ICurrencyAPI
 	ICryptoProvider
 	SetNext(IChain)
 }
