@@ -32,3 +32,9 @@ jobs:
           fail_on_error: true
           cache: true
           reporter: github-check
+
+
+      - name: Install go arch
+        run: go install -v github.com/fdaines/arch-go@latest
+      - name: Run arch test
+        run: arch-go -v

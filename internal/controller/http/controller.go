@@ -1,33 +1,19 @@
 package http
 
 import (
-	"context"
-
 	"github.com/labstack/echo/v4"
 
-	"exchange/internal/domain/notification"
-	"exchange/internal/domain/rate"
-	"exchange/internal/domain/user"
+	"exchange/internal/services/currency"
+	"exchange/internal/services/event"
+	user_service "exchange/internal/services/user"
 )
 
 //go:generate mockgen -source=controller.go -destination=mocks/controller.go
 
-type INotificationService interface {
-	Notify(ctx context.Context, n *notification.Notification) error
-}
-
-type ICurrencyService interface {
-	GetCurrency(ctx context.Context, c *rate.Rate) (*rate.Currency, error)
-}
-
-type IUserService interface {
-	NewUser(ctx context.Context, eu *user.User) error
-}
-
 type Services struct {
-	CurrencyService     ICurrencyService
-	UserService         IUserService
-	NotificationService INotificationService
+	CurrencyService     currency.ICurrencyService
+	UserService         user_service.IUserService
+	NotificationService event.INotificationService
 }
 
 type exchangeHandler struct {

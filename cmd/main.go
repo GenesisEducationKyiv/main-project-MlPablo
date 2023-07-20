@@ -79,11 +79,11 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			fx.Annotate(mail.NewMailService, fx.As(new(event.IMailService))),
 			fx.Annotate(
 				currency.NewCurrencyService,
+				fx.As(new(currency.ICurrencyService)),
 				fx.As(new(event.ICurrencyService)),
-				fx.As(new(_http.ICurrencyService)),
 			),
-			fx.Annotate(user.NewUserService, fx.As(new(_http.IUserService))),
-			fx.Annotate(event.NewNotificationService, fx.As(new(_http.INotificationService))),
+			fx.Annotate(user.NewUserService, fx.As(new(user.IUserService))),
+			fx.Annotate(event.NewNotificationService, fx.As(new(event.INotificationService))),
 			echoserver.New,
 		),
 		fx.Invoke(
@@ -135,9 +135,9 @@ func registerHttpHandlers(srv *_http.Services, e *echoserver.Server) {
 }
 
 func NewServices(
-	c _http.ICurrencyService,
-	u _http.IUserService,
-	e _http.INotificationService,
+	c currency.ICurrencyService,
+	u user.IUserService,
+	e event.INotificationService,
 ) *_http.Services {
 	return &_http.Services{
 		CurrencyService:     c,
