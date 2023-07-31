@@ -13,6 +13,7 @@ import (
 	"currency/internal/infrastructure/currency/binance"
 	"currency/internal/infrastructure/currency/coingecko"
 	"currency/internal/infrastructure/currency/currencyapi"
+	"currency/internal/infrastructure/events/kafka"
 	"currency/internal/services/currency"
 	echoserver "currency/pkg/echo"
 	"currency/pkg/grpc/server"
@@ -41,6 +42,7 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 			NewCurrencyapiConfig,
 			NewCoingeckoConfig,
 			NewGrpcConfig,
+			NewKafkaConfig,
 			createChan,
 			func() *http.Client {
 				return client.New(client.WithLogger(logrus.StandardLogger()))
@@ -69,6 +71,8 @@ func CreateApp() fx.Option { //nolint: ireturn // ok
 				},
 				fx.As(new(currency.ICurrencyAPI)),
 			),
+			// fx.Annotate(kafka.CreateKafka, fx.As(new(_http.Eventer))),
+			kafka.CreateKafka,
 			currency.NewCurrencyService,
 			server.NewServer,
 			echoserver.New,
@@ -134,8 +138,8 @@ func registerCryptoChain(
 	b.SetNext(co)
 }
 
-func registerHttpHandlers(srv *_http.Services, e *echoserver.Server) {
-	_http.RegisterHandlers(e.GetEchoServer(), srv)
+func registerHttpHandlers(srv *_http.Services, e *echoserver.Server, k *kafka.Kafka) {
+	_http.RegisterHandlers(e.GetEchoServer(), srv, k)
 }
 
 func registerGRPCHandlers(srv *grpc.Services, s *server.Server) {

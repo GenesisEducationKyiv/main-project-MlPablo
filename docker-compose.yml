@@ -7,6 +7,8 @@ services:
       context: ./services/currency
       dockerfile: Dockerfile
     restart: unless-stopped
+    depends_on:
+      - kafka
     networks:
       - exchange
   notifier:
@@ -16,6 +18,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - currency
+      - kafka
     restart: unless-stopped
     networks:
       - exchange
@@ -33,6 +36,29 @@ services:
     networks:
       - exchange
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - exchange
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_CREATE_TOPICS=logs:1:1
+    networks:
+      - exchange
 networks:
   exchange:
     driver: bridge
